@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/smartcity TBC.iml" filepath="$PROJECT_DIR$/.idea/smartcity TBC.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/smartCityAPI.iml" filepath="$PROJECT_DIR$/.idea/smartCityAPI.iml" />
     </modules>
   </component>
 </project>
