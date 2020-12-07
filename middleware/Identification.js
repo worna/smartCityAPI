@@ -1,5 +1,6 @@
 const CustomerDB = require('../modele/customerDB');
 const ManagerDB = require('../modele/managerDB');
+const AdminDB = require('../modele/adminDB');
 const pool = require('../modele/database');
 
 module.exports.identification = async (req, res, next) => {
@@ -39,9 +40,16 @@ module.exports.identificationWithAuth = async (req, res, next) => {
         try{
             const {rows: rowsManager} = await ManagerDB.getManager(client, email, password);
             const {rows: rowsCustomer} = await CustomerDB.getCustomer(client, email, password);
+            const {rows: rowsAdmin} = await AdminDB.getAdmin(client, email, password);
             const manager = rowsManager[0];
             const customer = rowsCustomer[0];
-            if(manager){
+            const admin = rowsAdmin[0];
+            if(admin){
+                req.session = admin;
+                req.session.authLevel = "admin";
+                next();
+            }
+            else if(manager){
                 req.session = manager;
                 req.session.authLevel = "manager";
                 next();

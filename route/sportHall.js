@@ -46,12 +46,12 @@ router.get('/:id', SportHallControleur.getSportHall);
  *          401:
  *              $ref: '#/components/responses/MissingJWT'
  *          403:
- *              $ref: '#/components/responses/mustBeManager'
+ *              $ref: '#/components/responses/mustBeAdmin'
  *          500:
  *              description: Server error
  *
  */
-router.post('/', JWTMiddleWare.identification, AuthoMiddleware.mustBeManager, SportHallControleur.postSportHall);
+router.post('/', JWTMiddleWare.identification, AuthoMiddleware.mustBeAdmin, SportHallControleur.postSportHall);
 
 /**
  * @swagger
@@ -76,7 +76,7 @@ router.post('/', JWTMiddleWare.identification, AuthoMiddleware.mustBeManager, Sp
  *              description: Server error
  *
  */
-router.patch('/', JWTMiddleWare.identification, AuthoMiddleware.mustBeManager, SportHallControleur.updateSportHall);
+router.patch('/', JWTMiddleWare.identification, AuthoMiddleware.mustBeAdmin, SportHallControleur.updateSportHall);
 
 /**
  * @swagger
@@ -99,6 +99,6 @@ router.patch('/', JWTMiddleWare.identification, AuthoMiddleware.mustBeManager, S
  *              description: Server error
  *
  */
-router.delete('/', JWTMiddleWare.identification, AuthoMiddleware.mustBeManager, SportHallControleur.deleteSportHall);
+router.delete('/', JWTMiddleWare.identification, AuthoMiddleware.mustBeAdmin, SportHallControleur.deleteSportHall);
 
 module.exports = router;
