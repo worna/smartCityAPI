@@ -22,6 +22,6 @@ const router = new Router;
  */
 router.post('/', SportHallCustomerControleur.postSportHallCustomer);
 
-router.get('/sportHall/:id', SportHallCustomerControleur.getSportHallCustomers);
-//router.get('/customer/:id',)
+router.get('/sportHall/:id', SportHallCustomerControleur.getCustomersInSportHall);
+router.get('/customer/:id', SportHallCustomerControleur.getSportHallsOfCustomer);
 module.exports = router;

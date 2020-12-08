@@ -2,6 +2,7 @@ const {DataTypes, Deferrable} = require('sequelize');
 const sequelize = require('../sequelize');
 const SportHall = require('./SportHall');
 const Customer = require('./Customer');
+const Room = require('./Room');
 
 const Course = sequelize.define('course', {
     id: {
@@ -29,8 +30,13 @@ const Course = sequelize.define('course', {
     activity: {
         type: DataTypes.STRING
     },
-    room: {
-        type: DataTypes.STRING
+    id_room: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: Room,
+            key: 'id_room',
+            deferrable: Deferrable.INITIALLY_IMMEDIATE
+        },
     },
     id_instructor: {
         type: DataTypes.INTEGER,
