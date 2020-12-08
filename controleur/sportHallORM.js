@@ -38,18 +38,20 @@ module.exports.getSportHall = async (req, res) => {
     const id = parseInt(idTexte);
     try{
         if(isNaN(id)){
+            console.log("The id is not a number");
             res.sendStatus(400);
         } else {
             const sportHall = await SportHallORM.findOne({where: {id: id}});
             if(sportHall !== null){
                 res.json(sportHall);
             } else {
+                console.log("Impossible to find the sport hall");
                 res.sendStatus(404);
             }
         }
     } catch (error){
         console.log(error);
-        res.status(500).send("--> " + error.message + " <--");
+        res.sendStatus(500);
     }
 }
 

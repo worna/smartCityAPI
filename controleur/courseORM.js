@@ -10,18 +10,20 @@ module.exports.getCourse = async (req, res) => {
     const id = parseInt(idTexte);
     try{
         if(isNaN(id)){
+            console.log("The id is not a number");
             res.sendStatus(400);
         } else {
             const course = await CourseORM.findOne({where: {id: id}});
             if(course !== null){
                 res.json(course);
             } else {
+                console.log("Impossible to find the course");
                 res.sendStatus(404);
             }
         }
     } catch (error){
         console.log(error);
-        res.status(500).send(error.message);
+        res.sendStatus(500);
     }
 }
 
@@ -58,7 +60,6 @@ module.exports.postCourse = async (req, res) => {
         }else if(error.message === "Instructor id not valid"){
             res.status(404).send("The instructor id is not valid");
         } else{
-            console.log(error);
             res.sendStatus(500);
         }
     }
@@ -82,12 +83,12 @@ module.exports.updateCourse = async (req, res) => {
         });
         res.sendStatus(204);
     } catch (error){
-         if(error.message === "Sport hall id not valid"){
+        console.log(error);
+        if (error.message === "Sport hall id not valid"){
              res.status(404).send("The sport hall id is not valid");
-        }else if(error.message === "Instructor id not valid"){
+        } else if (error.message === "Instructor id not valid"){
              res.status(404).send("The instructor id is not valid");
-        } else{
-            console.log(error);
+        } else {
             res.sendStatus(500);
         }
     }

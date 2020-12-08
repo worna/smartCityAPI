@@ -20,6 +20,8 @@ const router = new Router;
  *              description: Erreur serveur
  *
  */
-router.post('/', SportHallCustomerControleur.insertSportHallCustomer);
+router.post('/', SportHallCustomerControleur.postSportHallCustomer);
 
+router.get('/sportHall/:id', SportHallCustomerControleur.getSportHallCustomers);
+//router.get('/customer/:id',)
 module.exports = router;

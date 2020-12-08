@@ -3,10 +3,10 @@ const pool = require('../modele/database');
 const AdminModele = require("../modele/adminDB");
 
 
-
 module.exports.postAdmin = async (req, res) => {
     const {email, password} = req.body;
     if(email === undefined || password === undefined){
+        console.log("email or password is empty")
         res.sendStatus(400);
     } else {
         const client = await pool.connect();

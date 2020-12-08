@@ -1,4 +1,5 @@
-const CustomerControleur = require("../controleur/customerDB");
+const ManagerControleur = require("../controleur/managerDB");
+const CustomerControleur = require("../controleur/customerDB")
 const JWTMiddleWare = require("../middleware/IdentificationJWT");
 const AuthoMiddleware = require("../middleware/Authorization");
 const Router = require("express-promise-router");
@@ -19,7 +20,7 @@ const router = new Router;
  *              description: Server error
  *
  */
-router.post('/', CustomerControleur.postCustomer);
+router.post('/',JWTMiddleWare.identification, AuthoMiddleware.mustBeManager, ManagerControleur.postManager);
 
 /**
  * @swagger

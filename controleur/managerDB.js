@@ -1,14 +1,14 @@
 const pool = require('../modele/database');
-const CustomerDB = require('../modele/customerDB');
+const ManagerDB = require('../modele/managerDB');
 
 /**
  * @swagger
  *  components:
  *      responses:
- *          CustomerUpdated:
- *              description: The customer has been updated
+ *          ManagerUpdated:
+ *              description: The manager has been updated
  *      requestBodies:
- *          CustomerToUpdate:
+ *          ManagerToUpdate:
  *              content:
  *                  application/json:
  *                      schema:
@@ -41,7 +41,7 @@ const CustomerDB = require('../modele/customerDB');
  *                              language:
  *                                  type: string
  */
-module.exports.updateCustomer = async (req, res) => {
+module.exports.updateManager = async (req, res) => {
     if(req.session){
         const toUpdate = req.body;
         const newData = {};
@@ -78,7 +78,7 @@ module.exports.updateCustomer = async (req, res) => {
 
             const client = await pool.connect();
             try{
-                await CustomerDB.updateCustomer(
+                await ManagerDB.updateManager(
                     client,
                     req.body.email,
                     newData.firstname,
@@ -95,8 +95,8 @@ module.exports.updateCustomer = async (req, res) => {
                 );
                 res.sendStatus(204);
             }
-            catch (error) {
-                console.log(error);
+            catch (e) {
+                console.log(e);
                 res.sendStatus(500);
             } finally {
                 client.release();
@@ -116,10 +116,10 @@ module.exports.updateCustomer = async (req, res) => {
  * @swagger
  *  components:
  *      responses:
- *          CustomerAdd:
- *              description: The customer has been  added to database
+ *          ManagerAdd:
+ *              description: The manager has been  added to database
  *      requestBodies:
- *          CustomerToAdd:
+ *          ManagerToAdd:
  *              content:
  *                  application/json:
  *                      schema:
@@ -162,7 +162,7 @@ module.exports.updateCustomer = async (req, res) => {
  *                              - isinstructor
  *                              - language
  */
-module.exports.postCustomer = async (req, res) => {
+module.exports.postManager = async (req, res) => {
     const lastname = req.body.lastname;
     const firstname = req.body.firstname;
     const birthdate = req.body.birthdate;
@@ -174,13 +174,13 @@ module.exports.postCustomer = async (req, res) => {
     const isinstructor = req.body.isinstructor;
     const language = req.body.language;
 
-    if(lastname === undefined || firstname === undefined || birthdate === undefined || gender === undefined || phonenumber === undefined || email === undefined || password === undefined || inscriptiondate === undefined || isinstructor === undefined || language === undefined){
+    if(lastname === undefined || firstname === undefined || birthdate === undefined || gender === undefined || phonenumber === undefined || email === undefined || password === undefined || inscriptiondate === undefined  || isinstructor === undefined || language === undefined){
         console.log("Parameters are wrong or empty");
         res.sendStatus(400);
     } else {
         const client = await pool.connect();
         try {
-            await CustomerDB.createCustomer(client, lastname, firstname, birthdate, gender, phonenumber, email, password, inscriptiondate, isinstructor, language);
+            await ManagerDB.postManager(client, lastname, firstname, birthdate, gender, phonenumber, email, password, inscriptiondate, isinstructor, language);
             res.sendStatus(201);
         } catch (error) {
             console.log(error);

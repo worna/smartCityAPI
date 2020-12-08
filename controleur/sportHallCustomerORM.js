@@ -53,13 +53,12 @@ const {Sequelize} = require("sequelize");
  *                          - sportHall
  *                          - customer
  */
-module.exports.insertSportHallCustomer = async (req, res) => {
+module.exports.postSportHallCustomer = async (req, res) => {
     const {sportHall, customer} = req.body;
     try{
         await sequelize.transaction( {
             deferrable:  Sequelize.Deferrable.SET_DEFERRED
         }, async (t) => {
-
             const sportHallDB = await SportHallORM.findOne({where: {id: sportHall}});
             if(sportHallDB === null){
                 throw new Error("Sport hall id not valid");
@@ -73,9 +72,7 @@ module.exports.insertSportHallCustomer = async (req, res) => {
                 id_customer: customer
             }, {transaction: t});
         });
-
         res.sendStatus(201);
-
     } catch (error){
         console.log(error);
         if(error.message === "Sport hall id not valid"){
@@ -85,5 +82,35 @@ module.exports.insertSportHallCustomer = async (req, res) => {
         } else{
             res.sendStatus(500);
         }
+    }
+}
+module.exports.getSportHallCustomers = async (req, res) => {
+    const idTexte = req.params.id;
+    const id = parseInt(idTexte);
+    try{
+        if(isNaN(id)){
+            console.log("The id is not a number");
+            res.sendStatus(400);
+        } else {
+            const sportHallDB = await SportHallORM.findOne({where: {id: id}});
+            if(sportHallDB === null){
+                throw new Error("Sport hall id not valid");
+            }
+            const sportHallCustomers = await SportHallCustomerORM.findAll({where: {id_sport_hall: id}});
+            if(sportHallCustomers !== null){
+                const customers = [];
+                for (const sportHallcustomer of sportHallCustomers) {
+                    const customer = await CustomerORM.findOne({where: {id: sportHallcustomer.id_customer}});
+                    customers.push({customer});
+                }
+                res.json(customers);
+            } else {
+                console.log("No customers for this hall");
+                res.sendStatus(404);
+            }
+        }
+    } catch (error){
+        console.log(error);
+        res.sendStatus(500);
     }
 }

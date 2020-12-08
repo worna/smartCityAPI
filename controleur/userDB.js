@@ -23,6 +23,7 @@ const userDB = require('../modele/userDB');
 module.exports.login = async (req, res) => {
     const {email, password} = req.body;
     if(email === undefined || password === undefined){
+        console.log("Parameters are wrong or empty");
         res.sendStatus(400);
     } else {
         const client = await pool.connect();
@@ -30,6 +31,7 @@ module.exports.login = async (req, res) => {
             const result = await userDB.getUser(client, email, password);
             const {userType, value} = result;
             if (userType === "inconnu") {
+                console.log("You don't have account");
                 res.sendStatus(404);
             } else if (userType === "admin") {
                 const {email} = value;
@@ -50,8 +52,8 @@ module.exports.login = async (req, res) => {
                 );
                 res.json(token);
             } else {
-                const {id, last_name, first_name} = value;
-                const payload = {status: userType, value: {id, last_name, first_name}};
+                const {email, last_name, first_name} = value;
+                const payload = {status: userType, value: {email, last_name, first_name}};
                 const token = jwt.sign(
                     payload,
                     process.env.SECRET_TOKEN,
@@ -59,8 +61,8 @@ module.exports.login = async (req, res) => {
                 );
                 res.json(token);
             }
-        } catch (e) {
-            console.log(e);
+        } catch (error) {
+            console.log(error);
             res.sendStatus(500);
         } finally {
             client.release();
