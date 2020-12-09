@@ -97,3 +97,14 @@ module.exports.getCoursesOfCustomer = async (req, res) => {
         res.sendStatus(500);
     }
 }
+
+module.exports.deleteCustomerCourse = async (req, res) => {
+    const {customer, course} = req.body;
+    try{
+        await CustomerCourseORM.destroy({where: {id_customer: customer, id_course: course}});
+        res.sendStatus(204);
+    } catch (error){
+        console.log(error);
+        res.sendStatus(500);
+    }
+}

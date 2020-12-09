@@ -119,17 +119,17 @@ module.exports.getCustomersInSportHall = async (req, res) => {
 module.exports.getSportHallsOfCustomer = async (req, res) => {
     const idTexte = req.params.id;
     const id = parseInt(idTexte);
-    try{
-        if(isNaN(id)){
+    try {
+        if (isNaN(id)) {
             console.log("The id is not a number");
             res.sendStatus(400);
         } else {
             const customerDB = await CustomerORM.findOne({where: {id: id}});
-            if(customerDB === null){
+            if (customerDB === null) {
                 throw new Error("Customer id not valid");
             }
             const sportHallsOfCustomer = await SportHallCustomerORM.findAll({where: {id_customer: id}});
-            if(sportHallsOfCustomer !== null){
+            if (sportHallsOfCustomer !== null) {
                 const sportHalls = [];
                 for (const sportHallOfCustomer of sportHallsOfCustomer) {
                     const sportHall = await SportHallORM.findOne({where: {id: sportHallOfCustomer.id_sport_hall}});
@@ -141,6 +141,17 @@ module.exports.getSportHallsOfCustomer = async (req, res) => {
                 res.sendStatus(404);
             }
         }
+    } catch (error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+}
+
+module.exports.deleteSportHallCustomer = async (req, res) => {
+    const {sportHall, customer} = req.body;
+    try{
+        await SportHallCustomerORM.destroy({where: {id_sport_hall: sportHall, id_customer: customer}});
+        res.sendStatus(204);
     } catch (error){
         console.log(error);
         res.sendStatus(500);

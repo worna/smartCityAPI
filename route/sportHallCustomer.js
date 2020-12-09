@@ -24,4 +24,6 @@ router.post('/', SportHallCustomerControleur.postSportHallCustomer);
 
 router.get('/sportHall/:id', SportHallCustomerControleur.getCustomersInSportHall);
 router.get('/customer/:id', SportHallCustomerControleur.getSportHallsOfCustomer);
+
+router.delete('/', SportHallCustomerControleur.deleteSportHallCustomer);
 module.exports = router;

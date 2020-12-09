@@ -13,8 +13,16 @@ const Course = sequelize.define('course', {
     id_sport_hall: {
         type: DataTypes.INTEGER,
         references: {
-            model: SportHall,
-            key: 'id',
+            model: Room,
+            key: 'id_sport_hall',
+            deferrable: Deferrable.INITIALLY_IMMEDIATE
+        },
+    },
+    id_room: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: Room,
+            key: 'id_room',
             deferrable: Deferrable.INITIALLY_IMMEDIATE
         },
     },
@@ -29,14 +37,6 @@ const Course = sequelize.define('course', {
     },
     activity: {
         type: DataTypes.STRING
-    },
-    id_room: {
-        type: DataTypes.INTEGER,
-        references: {
-            model: Room,
-            key: 'id_room',
-            deferrable: Deferrable.INITIALLY_IMMEDIATE
-        },
     },
     id_instructor: {
         type: DataTypes.INTEGER,

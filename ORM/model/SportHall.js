@@ -25,7 +25,16 @@ const SportHall = sequelize.define('sport_hall', {
     },
     email:{
         type: DataTypes.STRING
-    }
+    },
+    city_name:{
+        type: DataTypes.STRING
+    },
+    zip_code:{
+        type: DataTypes.INTEGER
+    },
+    country:{
+        type: DataTypes.STRING
+    },
 }, {
     timestamps: false,
     freezeTableName: true

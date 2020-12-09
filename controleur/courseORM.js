@@ -1,6 +1,7 @@
 const CourseORM = require('../ORM/model/Course');
 const CustomerORM = require ('../ORM/model/Customer');
 const SportHallORM = require ('../ORM/model/SportHall');
+const RoomORM = require('../ORM/model/Room');
 const sequelize = require("../ORM/sequelize");
 const {Sequelize} = require("sequelize");
 
@@ -29,14 +30,14 @@ module.exports.getCourse = async (req, res) => {
 
 module.exports.postCourse = async (req, res) => {
     const body = req.body;
-    const {id_sport_hall, starting_date_time, ending_date_time, level, activity, room, id_instructor} = body;
+    const {id_sport_hall, id_room, starting_date_time, ending_date_time, level, activity, id_instructor} = body;
     try{
         await sequelize.transaction( {
             deferrable:  Sequelize.Deferrable.SET_DEFERRED
         }, async (t) => {
-        const sportHallDB = await SportHallORM.findOne({where: {id: id_sport_hall}});
-        if(sportHallDB === null){
-            throw new Error("Sport hall id not valid");
+        const roomDB = await RoomORM.findOne({where: {id_room: id_room, id_sport_hall: id_sport_hall}});
+        if(roomDB === null){
+            throw new Error("Room or sporthall id not valid");
         }
         const customerDB = await CustomerORM.findOne({where: {id: id_instructor}});
         if(customerDB === null){
@@ -44,19 +45,19 @@ module.exports.postCourse = async (req, res) => {
         }
         await CourseORM.create({
             id_sport_hall,
+            id_room,
             starting_date_time,
             ending_date_time,
             level,
             activity,
-            room,
             id_instructor,
         }, {transaction: t});
         });
         res.sendStatus(201);
     } catch (error){
         console.log(error);
-        if(error.message === "Sport hall id not valid"){
-            res.status(404).send("The sport hall id is not valid");
+        if(error.message === "Room or sporthall id not valid"){
+            res.status(404).send("The room or the sporthall id is not valid");
         }else if(error.message === "Instructor id not valid"){
             res.status(404).send("The instructor id is not valid");
         } else{

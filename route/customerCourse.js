@@ -7,4 +7,6 @@ router.post('/', CustomerCourseControleur.postCustomerCourse);
 
 router.get('/course/:id', CustomerCourseControleur.getCustomersInCourse);
 router.get('/customer/:id', CustomerCourseControleur.getCoursesOfCustomer);
+
+router.delete('/', CustomerCourseControleur.deleteCustomerCourse);
 module.exports = router;

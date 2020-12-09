@@ -1,5 +1,6 @@
 const SportHallORM = require('../ORM/model/SportHall');
 const CustomerORM = require ('../ORM/model/Customer');
+const CityORM = require('../ORM/model/City');
 const sequelize = require("../ORM/sequelize");
 const {Sequelize} = require("sequelize");
 
@@ -81,7 +82,7 @@ module.exports.getSportHall = async (req, res) => {
 
 module.exports.postSportHall = async (req, res) => {
     const body = req.body;
-    const {name, manager, phone_number, email} = body;
+    const {name, manager, phone_number, email, city_name, zip_code, country} = body;
     try{
         await sequelize.transaction( {
             deferrable:  Sequelize.Deferrable.SET_DEFERRED
@@ -90,11 +91,25 @@ module.exports.postSportHall = async (req, res) => {
         if(managerDB === null){
             throw new Error("Manager id not valid");
         }
+        const cityDB = await CityORM.findOne({where: {city_name: city_name, zip_code: zip_code, country: country}});
+        if(cityDB === null){
+            city = await CityORM.create({
+                city_name,
+                zip_code,
+                country
+            }, {transaction: t});
+        } else {
+            city = cityDB;
+        }
+
         await SportHallORM.create({
             name,
             manager,
             phone_number,
             email,
+            city_name,
+            zip_code,
+            country
         }, {transaction: t});
 
         });
@@ -135,7 +150,7 @@ module.exports.postSportHall = async (req, res) => {
  *                              type: string
  */
 module.exports.updateSportHall = async (req, res) => {
-    const {id, name, manager, phone_number, email,} = req.body;
+    const {id, name, manager, phone_number, email, city_name, zip_code, country} = req.body;
     try{
         await sequelize.transaction( {
             deferrable:  Sequelize.Deferrable.SET_DEFERRED
@@ -144,7 +159,17 @@ module.exports.updateSportHall = async (req, res) => {
         if(managerDB === null){
             throw new Error("Manager id not valid");
         }
-        await SportHallORM.update({ name, manager, phone_number, email}, {where: {id}}, {transaction: t});
+        const cityDB = await CityORM.findOne({where: {city_name: city_name, zip_code: zip_code, country: country}});
+        if(cityDB === null){
+            city = await CityORM.create({
+                city_name,
+                zip_code,
+                country
+            }, {transaction: t});
+        } else {
+            city = cityDB;
+        }
+        await SportHallORM.update({ name, manager, phone_number, email, city_name, zip_code, country}, {where: {id}}, {transaction: t});
         });
         res.sendStatus(204);
     } catch (error){
