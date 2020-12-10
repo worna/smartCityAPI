@@ -4,5 +4,5 @@ const JWTMiddleWare = require("../middleware/IdentificationJWT");
 const AuthoMiddleware = require("../middleware/Authorization");
 const router = new Router;
 
-router.post('/', AdminControleur.postAdmin);
+router.post('/', JWTMiddleWare.identification, AuthoMiddleware.mustBeAdmin, AdminControleur.postAdmin);
 module.exports = router;

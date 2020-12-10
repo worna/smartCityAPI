@@ -3,6 +3,7 @@ const process = require('process');
 const jwt = require('jsonwebtoken');
 const pool = require('../modele/database');
 const userDB = require('../modele/userDB');
+const managerDB = require('../modele/managerDB');
 
 /**
  * @swagger
@@ -43,8 +44,10 @@ module.exports.login = async (req, res) => {
                 );
                 res.json(token);
             } else if (userType === "manager") {
-                const {id, last_name} = value;
-                const payload = {status: userType, value: {id, last_name}};
+                const {id, email} = value;
+                const sport_hall = await managerDB.getSportHallId(client, id);
+                const {id_sport_hall} = sport_hall.rows[0];
+                const payload = {status: userType, value: {email, id_sport_hall}};
                 const token = jwt.sign(
                     payload,
                     process.env.SECRET_TOKEN,

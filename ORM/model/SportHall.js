@@ -14,10 +14,10 @@ const SportHall = sequelize.define('sport_hall', {
         type: DataTypes.STRING
     },
     manager: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         references: {
             model: Customer,
-            key: 'id',
+            key: 'email',
             deferrable: Deferrable.INITIALLY_IMMEDIATE
         },
     },

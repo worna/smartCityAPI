@@ -76,7 +76,7 @@ router.post('/', JWTMiddleWare.identification, AuthoMiddleware.mustBeAdmin, Spor
  *              description: Server error
  *
  */
-router.patch('/', JWTMiddleWare.identification, AuthoMiddleware.mustBeAdmin, SportHallControleur.updateSportHall);
+router.patch('/', JWTMiddleWare.identification, AuthoMiddleware.mustBeAdminOrManager, SportHallControleur.updateSportHall);
 
 /**
  * @swagger

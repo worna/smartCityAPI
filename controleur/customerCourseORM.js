@@ -5,21 +5,21 @@ const sequelize = require("../ORM/sequelize");
 const {Sequelize} = require("sequelize");
 
 module.exports.postCustomerCourse = async (req, res) => {
-    const {customer, course} = req.body;
+    const {email, course} = req.body;
     try{
         await sequelize.transaction( {
             deferrable:  Sequelize.Deferrable.SET_DEFERRED
         }, async (t) => {
-            const customerDB = await CustomerORM.findOne({where: {id: customer}});
+            const customerDB = await CustomerORM.findOne({where: {email: email}});
             if(customerDB === null){
-                throw new Error("Customer id not valid");
+                throw new Error("Customer email not valid");
             }
             const courseDB = await CourseORM.findOne({where: {id: course}});
             if(courseDB === null){
                 throw new Error("Course id not valid");
             }
             await CustomerCourseORM.create({
-                id_customer: customer,
+                email_customer: email,
                 id_course: course
             }, {transaction: t});
         });
@@ -28,8 +28,8 @@ module.exports.postCustomerCourse = async (req, res) => {
         console.log(error);
         if(error.message === "Course id not valid"){
             res.status(404).send( "The course id is not valid");
-        }else if(error.message === "Customer id not valid"){
-            res.status(404).send("The customer id is not valid");
+        }else if(error.message === "Customer email not valid"){
+            res.status(404).send("The customer email is not valid");
         } else{
             res.sendStatus(500);
         }
@@ -52,7 +52,7 @@ module.exports.getCustomersInCourse = async (req, res) => {
             if(customersInCourse !== null){
                 const customers = [];
                 for (const customerInCourse of customersInCourse) {
-                    const customer = await CustomerORM.findOne({where: {id: customerInCourse.id_customer}});
+                    const customer = await CustomerORM.findOne({where: {email: customerInCourse.email_customer}});
                     customers.push({customer});
                 }
                 res.json(customers);
@@ -68,29 +68,23 @@ module.exports.getCustomersInCourse = async (req, res) => {
 }
 
 module.exports.getCoursesOfCustomer = async (req, res) => {
-    const idTexte = req.params.id;
-    const id = parseInt(idTexte);
+    const email = req.params.email;
     try{
-        if(isNaN(id)){
-            console.log("The id is not a number");
-            res.sendStatus(400);
+        const customerDB = await CustomerORM.findOne({where: {email: email}});
+        if(customerDB === null){
+            throw new Error("Customer email not valid");
+        }
+        const coursesOfCustomer = await CustomerCourseORM.findAll({where: {email_customer: email}});
+        if(coursesOfCustomer !== null){
+            const courses = [];
+            for (const courseOfCustomer of coursesOfCustomer) {
+                const course = await CourseORM.findOne({where: {id: courseOfCustomer.id_course}});
+                courses.push({course});
+            }
+            res.json(courses);
         } else {
-            const customerDB = await CustomerORM.findOne({where: {id: id}});
-            if(customerDB === null){
-                throw new Error("Customer id not valid");
-            }
-            const coursesOfCustomer = await CustomerCourseORM.findAll({where: {id_customer: id}});
-            if(coursesOfCustomer !== null){
-                const courses = [];
-                for (const courseOfCustomer of coursesOfCustomer) {
-                    const course = await CourseORM.findOne({where: {id: courseOfCustomer.id_course}});
-                    courses.push({course});
-                }
-                res.json(courses);
-            } else {
-                console.log("No course for this customer");
-                res.sendStatus(404);
-            }
+            console.log("No course for this customer");
+            res.sendStatus(404);
         }
     } catch (error){
         console.log(error);
@@ -99,9 +93,9 @@ module.exports.getCoursesOfCustomer = async (req, res) => {
 }
 
 module.exports.deleteCustomerCourse = async (req, res) => {
-    const {customer, course} = req.body;
+    const {email_customer, course} = req.body;
     try{
-        await CustomerCourseORM.destroy({where: {id_customer: customer, id_course: course}});
+        await CustomerCourseORM.destroy({where: {email_customer: email_customer, id_course: course}});
         res.sendStatus(204);
     } catch (error){
         console.log(error);

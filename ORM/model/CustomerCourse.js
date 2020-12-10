@@ -4,12 +4,12 @@ const Customer = require('./Customer');
 const Course = require('./Course');
 
 const CustomerCourse = sequelize.define('customer_course', {
-    id_customer: {
-        type: DataTypes.INTEGER,
+    email_customer: {
+        type: DataTypes.STRING,
         primaryKey: true,
         references: {
             model: Customer,
-            key: 'id',
+            key: 'email',
             deferrable: Deferrable.INITIALLY_IMMEDIATE
         }
     },
