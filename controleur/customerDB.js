@@ -1,5 +1,9 @@
 const pool = require('../modele/database');
 const CustomerDB = require('../modele/customerDB');
+const CityORM = require('../ORM/model/City');
+const sequelize = require("../ORM/sequelize");
+const {Sequelize} = require("sequelize");
+
 
 /**
  * @swagger
@@ -58,7 +62,11 @@ module.exports.updateCustomer = async (req, res) => {
             toUpdate.inscriptiondate !== undefined ||
             toUpdate.ismanager !== undefined ||
             toUpdate.isinstructor !== undefined ||
-            toUpdate.language !== undefined
+            toUpdate.language !== undefined ||
+            toUpdate.address !== undefined ||
+            toUpdate.city_name !== undefined ||
+            toUpdate.zip_code !== undefined ||
+            toUpdate.country !== undefined
         ){
             doUpdate = true;
         }
@@ -75,6 +83,10 @@ module.exports.updateCustomer = async (req, res) => {
             newData.ismanager = toUpdate.ismanager;
             newData.isinstructor = toUpdate.isinstructor;
             newData.language = toUpdate.language;
+            newData.address = toUpdate.address;
+            newData.city_name = toUpdate.city_name;
+            newData.zip_code = toUpdate.zip_code;
+            newData.country = toUpdate.country;
 
             const client = await pool.connect();
             try{
@@ -91,7 +103,11 @@ module.exports.updateCustomer = async (req, res) => {
                     newData.inscriptiondate,
                     newData.ismanager,
                     newData.isinstructor,
-                    newData.language
+                    newData.language,
+                    newData.address,
+                    newData.city_name,
+                    newData.zip_code,
+                    newData.country
                 );
                 res.sendStatus(204);
             }
@@ -173,14 +189,32 @@ module.exports.postCustomer = async (req, res) => {
     const inscriptiondate = req.body.inscriptiondate;
     const isinstructor = req.body.isinstructor;
     const language = req.body.language;
+    const address = req.body.address;
+    const city_name = req.body.city_name;
+    const zip_code = req.body.zip_code;
+    const country = req.body.country;
 
-    if(lastname === undefined || firstname === undefined || birthdate === undefined || gender === undefined || phonenumber === undefined || email === undefined || password === undefined || inscriptiondate === undefined || isinstructor === undefined || language === undefined){
+    if(lastname === undefined || firstname === undefined || birthdate === undefined || gender === undefined || phonenumber === undefined || email === undefined || password === undefined || inscriptiondate === undefined || isinstructor === undefined || language === undefined || address === undefined || city_name === undefined || zip_code === undefined || country === undefined){
         console.log("Parameters are wrong or empty");
         res.sendStatus(400);
     } else {
         const client = await pool.connect();
         try {
-            await CustomerDB.createCustomer(client, lastname, firstname, birthdate, gender, phonenumber, email, password, inscriptiondate, isinstructor, language);
+            await sequelize.transaction( {
+                deferrable:  Sequelize.Deferrable.SET_DEFERRED
+            }, async (t) => {
+            const cityDB = await CityORM.findOne({where: {city_name: city_name, zip_code: zip_code, country: country}});
+            if(cityDB === null){
+                city = await CityORM.create({
+                    city_name,
+                    zip_code,
+                    country
+                }, {transaction: t});
+            } else {
+                city = cityDB;
+            }
+            });
+            await CustomerDB.createCustomer(client, lastname, firstname, birthdate, gender, phonenumber, email, password, inscriptiondate, isinstructor, language, address, city_name, zip_code, country);
             res.sendStatus(201);
         } catch (error) {
             console.log(error);

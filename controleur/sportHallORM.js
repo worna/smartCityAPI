@@ -82,7 +82,7 @@ module.exports.getSportHall = async (req, res) => {
 
 module.exports.postSportHall = async (req, res) => {
     const body = req.body;
-    const {name, manager, phone_number, email, city_name, zip_code, country} = body;
+    const {name, manager, phone_number, email, address, city_name, zip_code, country} = body;
     try{
         await sequelize.transaction( {
             deferrable:  Sequelize.Deferrable.SET_DEFERRED
@@ -107,6 +107,7 @@ module.exports.postSportHall = async (req, res) => {
             manager,
             phone_number,
             email,
+            address,
             city_name,
             zip_code,
             country
@@ -150,7 +151,7 @@ module.exports.postSportHall = async (req, res) => {
  *                              type: string
  */
 module.exports.updateSportHall = async (req, res) => {
-    const {id, name, manager, phone_number, email, city_name, zip_code, country} = req.body;
+    const {id, name, manager, phone_number, email, address, city_name, zip_code, country} = req.body;
     try{
         await sequelize.transaction( {
             deferrable:  Sequelize.Deferrable.SET_DEFERRED
@@ -169,7 +170,7 @@ module.exports.updateSportHall = async (req, res) => {
         } else {
             city = cityDB;
         }
-        await SportHallORM.update({ name, manager, phone_number, email, city_name, zip_code, country}, {where: {id}}, {transaction: t});
+        await SportHallORM.update({ name, manager, phone_number, email, address, city_name, zip_code, country}, {where: {id}}, {transaction: t});
         });
         res.sendStatus(204);
     } catch (error){

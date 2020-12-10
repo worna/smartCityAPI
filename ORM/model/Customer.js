@@ -39,6 +39,18 @@ const Customer = sequelize.define('customer', {
     },
     language: {
         type: DataTypes.STRING
+    },
+    address:{
+        type: DataTypes.STRING
+    },
+    city_name:{
+        type: DataTypes.STRING
+    },
+    zip_code:{
+        type: DataTypes.INTEGER
+    },
+    country:{
+        type: DataTypes.STRING
     }
 },{
     timestamps: false,

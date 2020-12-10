@@ -1,9 +1,9 @@
 const {getHash} = require("../utils/utils");
 
-module.exports.createCustomer = async (client, firstName, lastName, birthDate, gender, phoneNumber, email, password, inscriptionDate, isInstructor, language) => {
+module.exports.createCustomer = async (client, firstName, lastName, birthDate, gender, phoneNumber, email, password, inscriptionDate, isInstructor, language, address, city_name, zip_code, country) => {
     return await client.query(`
-        INSERT INTO customer(first_name, last_name, birth_date, gender, phone_number, email, password, inscription_date, is_manager, is_instructor, language)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 0, $9, $10)`, [firstName, lastName, birthDate, gender, phoneNumber, email, await getHash(password), inscriptionDate, isInstructor, language]
+        INSERT INTO customer(first_name, last_name, birth_date, gender, phone_number, email, password, inscription_date, is_manager, is_instructor, language , address, city_name, zip_code, country)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 0, $9, $10, $11, $12, $13, $14)`, [firstName, lastName, birthDate, gender, phoneNumber, email, await getHash(password), inscriptionDate, isInstructor, language, address, city_name, zip_code, country]
     );
 }
 module.exports.customerExist = async (client, email) => {
@@ -19,7 +19,7 @@ module.exports.getCustomer = async (client, email) => {
         SELECT * FROM customer WHERE email = $1 AND is_manager = 0 LIMIT 1;`, [email]);
 }
 
-module.exports.updateCustomer = async (client, email, firstName, lastName, birthDate, gender, phoneNumber, newEmail, password, inscriptionDate, isManager, isInstructor, language) => {
+module.exports.updateCustomer = async (client, email, firstName, lastName, birthDate, gender, phoneNumber, newEmail, password, inscriptionDate, isManager, isInstructor, language, address, city_name, zip_code, country) => {
     const params = [];
     const querySet = [];
     let query = "UPDATE customer SET ";
@@ -66,6 +66,22 @@ module.exports.updateCustomer = async (client, email, firstName, lastName, birth
     if(language !== undefined){
         params.push(language);
         querySet.push(` language = $${params.length} `);
+    }
+    if(address !== undefined){
+        params.push(address);
+        querySet.push(` address = $${params.length} `);
+    }
+    if(city_name !== undefined){
+        params.push(city_name);
+        querySet.push(` city_name = $${params.length} `);
+    }
+    if(zip_code !== undefined){
+        params.push(zip_code);
+        querySet.push(` zip_code = $${params.length} `);
+    }
+    if(country !== undefined){
+        params.push(country);
+        querySet.push(` country = $${params.length} `);
     }
 
     if(params.length > 0){

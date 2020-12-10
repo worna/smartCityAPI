@@ -3,6 +3,7 @@ const sequelize = require('../sequelize');
 const Customer = require('./Customer');
 
 
+
 const SportHall = sequelize.define('sport_hall', {
     id: {
         type: DataTypes.INTEGER,
@@ -24,6 +25,9 @@ const SportHall = sequelize.define('sport_hall', {
         type: DataTypes.STRING
     },
     email:{
+        type: DataTypes.STRING
+    },
+    address:{
         type: DataTypes.STRING
     },
     city_name:{
