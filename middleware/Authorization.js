@@ -14,7 +14,7 @@ module.exports.mustBeManager = (req, res, next) => {
     }
 }
 module.exports.mustBeAdminOrManager = (req, res, next) => {
-    if(req.session && (req.session.authLevel === "admin" ||  req.session.authLevel === "manager" && req.session.id_sport_hall === req.body.id_sport_hall)){
+    if(req.session && (req.session.authLevel === "admin" ||  req.session.authLevel === "manager" && req.session.sport_halls_ids.includes(req.body.id))){
         next();
     } else {
         console.log("You must be admin or manager of the sport hall");

@@ -14,8 +14,32 @@ module.exports.getCourse = async (req, res) => {
             console.log("The id is not a number");
             res.sendStatus(400);
         } else {
-            const course = await CourseORM.findOne({where: {id: id}});
-            if(course !== null){
+            const courseDB = await CourseORM.findOne({where: {id: id}});
+            if(courseDB !== null){
+                const {id, id_sport_hall, id_room, starting_date_time, ending_date_time, level, activity, id_instructor} = courseDB;
+                const sportHall = await SportHallORM.findOne({where: {id: id_sport_hall}});
+                const {name} = sportHall;
+                const room = await RoomORM.findOne({where: {id_room: id_room, id_sport_hall: id_sport_hall}});
+                const {max_capacity} = room;
+                const instructor = await CustomerORM.findOne({where: {id: id_instructor}});
+                const {last_name, first_name, email} = instructor;
+                const course = {
+                    id: id,
+                    sportHall: name,
+                    room: {
+                        id_room,
+                        max_capacity,
+                    },
+                    starting_date_time: starting_date_time,
+                    ending_date_time: ending_date_time,
+                    level: level,
+                    activity: activity,
+                    instructor: {
+                        last_name,
+                        first_name,
+                        email
+                    },
+                }
                 res.json(course);
             } else {
                 console.log("Impossible to find the course");

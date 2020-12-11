@@ -45,9 +45,13 @@ module.exports.login = async (req, res) => {
                 res.json(token);
             } else if (userType === "manager") {
                 const {id, email} = value;
-                const sport_hall = await managerDB.getSportHallId(client, id);
-                const {id_sport_hall} = sport_hall.rows[0];
-                const payload = {status: userType, value: {email, id_sport_hall}};
+                const sport_halls = await managerDB.getSportHallIds(client, email);
+                const sport_halls_ids = [];
+                for(const sport_hall of Object.keys(sport_halls.rows)) {
+                    sport_halls_ids.push(sport_hall);
+                }
+
+                const payload = {status: userType, value: {email, sport_halls_ids}};
                 const token = jwt.sign(
                     payload,
                     process.env.SECRET_TOKEN,

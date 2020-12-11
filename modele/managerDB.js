@@ -9,8 +9,8 @@ module.exports.postManager = async (client, firstName, lastName, birthDate, gend
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 1, $9, $10)`, [firstName, lastName, birthDate, gender, phoneNumber, email, await getHash(password), inscriptionDate, isInstructor, language]
     );
 }
-module.exports.getSportHallId = async (client, id) => {
+module.exports.getSportHallIds = async (client, email) => {
     return await client.query(`
-        SELECT id as id_sport_hall FROM sport_hall WHERE manager = $1 LIMIT 1;
-    `,[id]);
+        SELECT id as id_sport_hall FROM sport_hall WHERE manager = $1;
+    `,[email]);
 }

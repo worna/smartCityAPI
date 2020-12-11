@@ -1,7 +1,7 @@
 const {DataTypes, Deferrable} = require('sequelize');
 const sequelize = require('../sequelize');
 const Customer = require('./Customer');
-
+const SportHallCustomer = require('./SportHallCustomer');
 
 
 const SportHall = sequelize.define('sport_hall', {

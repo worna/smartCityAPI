@@ -20,7 +20,7 @@ const SportHallCustomer = sequelize.define('sport_hall_customer', {
             model: Customer,
             key: 'id',
             deferrable: Deferrable.INITIALLY_IMMEDIATE
-        },
+        }
     }
 }, {
     timestamps: false,

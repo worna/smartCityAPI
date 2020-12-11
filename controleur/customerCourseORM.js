@@ -52,7 +52,13 @@ module.exports.getCustomersInCourse = async (req, res) => {
             if(customersInCourse !== null){
                 const customers = [];
                 for (const customerInCourse of customersInCourse) {
-                    const customer = await CustomerORM.findOne({where: {email: customerInCourse.email_customer}});
+                    const customerDB = await CustomerORM.findOne({where: {email: customerInCourse.email_customer}});
+                    const {last_name, first_name, email} = customerDB;
+                    const customer = {
+                        last_name,
+                        first_name,
+                        email
+                    }
                     customers.push({customer});
                 }
                 res.json(customers);
