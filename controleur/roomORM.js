@@ -15,8 +15,16 @@ module.exports.getRoom = async (req, res) => {
             console.log("The id is not a number");
             res.sendStatus(400);
         } else {
-            const room = await RoomORM.findOne({where: {id_room: id_room, id_sport_hall: id_sport_hall}});
-            if(room !== null){
+            const roomDB = await RoomORM.findOne({where: {id_room: id_room, id_sport_hall: id_sport_hall}});
+            if(roomDB !== null){
+                const {max_capacity} = roomDB;
+                const sportHall = await SportHallORM.findOne({where: {id: id_sport_hall}});
+                const {name} = sportHall;
+                const room = {
+                    id: id_room,
+                    sportHall: name,
+                    max_capacity
+                }
                 res.json(room);
             } else {
                 console.log("Impossible to find the room");

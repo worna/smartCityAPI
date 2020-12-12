@@ -38,11 +38,11 @@ const Course = sequelize.define('course', {
     activity: {
         type: DataTypes.STRING
     },
-    id_instructor: {
-        type: DataTypes.INTEGER,
+    instructor: {
+        type: DataTypes.STRING,
         references: {
             model: Customer,
-            key: 'id',
+            key: 'email',
             deferrable: Deferrable.INITIALLY_IMMEDIATE
         },
     }

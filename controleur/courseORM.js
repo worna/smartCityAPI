@@ -16,13 +16,13 @@ module.exports.getCourse = async (req, res) => {
         } else {
             const courseDB = await CourseORM.findOne({where: {id: id}});
             if(courseDB !== null){
-                const {id, id_sport_hall, id_room, starting_date_time, ending_date_time, level, activity, id_instructor} = courseDB;
+                const {id, id_sport_hall, id_room, starting_date_time, ending_date_time, level, activity, instructor} = courseDB;
                 const sportHall = await SportHallORM.findOne({where: {id: id_sport_hall}});
                 const {name} = sportHall;
                 const room = await RoomORM.findOne({where: {id_room: id_room, id_sport_hall: id_sport_hall}});
                 const {max_capacity} = room;
-                const instructor = await CustomerORM.findOne({where: {id: id_instructor}});
-                const {last_name, first_name, email} = instructor;
+                const instructorDB = await CustomerORM.findOne({where: {email: instructor}});
+                const {last_name, first_name, email} = instructorDB;
                 const course = {
                     id: id,
                     sportHall: name,
@@ -54,7 +54,7 @@ module.exports.getCourse = async (req, res) => {
 
 module.exports.postCourse = async (req, res) => {
     const body = req.body;
-    const {id_sport_hall, id_room, starting_date_time, ending_date_time, level, activity, id_instructor} = body;
+    const {id_sport_hall, id_room, starting_date_time, ending_date_time, level, activity, instructor} = body;
     try{
         await sequelize.transaction( {
             deferrable:  Sequelize.Deferrable.SET_DEFERRED
@@ -63,7 +63,7 @@ module.exports.postCourse = async (req, res) => {
         if(roomDB === null){
             throw new Error("Room or sporthall id not valid");
         }
-        const customerDB = await CustomerORM.findOne({where: {id: id_instructor}});
+        const customerDB = await CustomerORM.findOne({where: {email: instructor}});
         if(customerDB === null){
             throw new Error("Instructor id not valid");
         }
@@ -74,7 +74,7 @@ module.exports.postCourse = async (req, res) => {
             ending_date_time,
             level,
             activity,
-            id_instructor,
+            instructor,
         }, {transaction: t});
         });
         res.sendStatus(201);
@@ -91,7 +91,7 @@ module.exports.postCourse = async (req, res) => {
 }
 
 module.exports.updateCourse = async (req, res) => {
-    const {id, id_sport_hall, starting_date_time, ending_date_time, level, activity, room, id_instructor} = req.body;
+    const {id, id_sport_hall, starting_date_time, ending_date_time, level, activity, room, instructor} = req.body;
     try{
         await sequelize.transaction( {
             deferrable:  Sequelize.Deferrable.SET_DEFERRED
@@ -100,11 +100,11 @@ module.exports.updateCourse = async (req, res) => {
         if(sportHallDB === null){
             throw new Error("Sport hall id not valid");
         }
-        const customerDB = await CustomerORM.findOne({where: {id: id_instructor}});
+        const customerDB = await CustomerORM.findOne({where: {email: instructor}});
         if(customerDB === null){
             throw new Error("Instructor id not valid");
         }
-        await CourseORM.update({id_sport_hall, starting_date_time, ending_date_time, level, activity, room, id_instructor}, {where: {id}}, {transaction: t});
+        await CourseORM.update({id_sport_hall, starting_date_time, ending_date_time, level, activity, room, instructor}, {where: {id}}, {transaction: t});
         });
         res.sendStatus(204);
     } catch (error){

@@ -1,10 +1,35 @@
 const pool = require('../modele/database');
 const CustomerDB = require('../modele/customerDB');
+const CustomerORM = require('../ORM/model/Customer');
 const CityORM = require('../ORM/model/City');
 const sequelize = require("../ORM/sequelize");
 const {Sequelize} = require("sequelize");
 
-
+module.exports.getAllCustomers = async (req, res) => {
+    const allCustomers = await CustomerORM.findAll();
+    const customers = [];
+    for (const customerDB of allCustomers) {
+        const customer = {
+            id: customerDB.id,
+            first_name : customerDB.first_name,
+            last_name : customerDB.last_name,
+            birth_date : customerDB.birth_date,
+            gender : customerDB.gender,
+            phone_number : customerDB.phone_number,
+            email : customerDB.email,
+            inscription_date : customerDB.inscription_date,
+            is_manager : customerDB.is_manager,
+            is_instructor : customerDB.is_instructor,
+            language : customerDB.language,
+            address : customerDB.address,
+            city_name : customerDB.city_name,
+            zip_code : customerDB.zip_code,
+            country : customerDB.country
+        }
+        customers.push({customer});
+    }
+    res.json(customers);
+};
 /**
  * @swagger
  *  components:
@@ -179,22 +204,21 @@ module.exports.updateCustomer = async (req, res) => {
  *                              - language
  */
 module.exports.postCustomer = async (req, res) => {
-    const lastname = req.body.lastname;
-    const firstname = req.body.firstname;
-    const birthdate = req.body.birthdate;
+    const lastname = req.body.last_name;
+    const firstname = req.body.first_name;
+    const birthdate = req.body.birth_date;
     const gender = req.body.gender;
-    const phonenumber= req.body.phonenumber;
+    const phonenumber= req.body.phone_number;
     const email = req.body.email;
     const password = req.body.password;
-    const inscriptiondate = req.body.inscriptiondate;
-    const isinstructor = req.body.isinstructor;
+    const isinstructor = req.body.is_instructor;
     const language = req.body.language;
     const address = req.body.address;
     const city_name = req.body.city_name;
     const zip_code = req.body.zip_code;
     const country = req.body.country;
 
-    if(lastname === undefined || firstname === undefined || birthdate === undefined || gender === undefined || phonenumber === undefined || email === undefined || password === undefined || inscriptiondate === undefined || isinstructor === undefined || language === undefined || address === undefined || city_name === undefined || zip_code === undefined || country === undefined){
+    if(lastname === undefined || firstname === undefined || birthdate === undefined || gender === undefined || phonenumber === undefined || email === undefined || password === undefined || isinstructor === undefined || language === undefined || address === undefined || city_name === undefined || zip_code === undefined || country === undefined){
         console.log("Parameters are wrong or empty");
         res.sendStatus(400);
     } else {
@@ -214,7 +238,7 @@ module.exports.postCustomer = async (req, res) => {
                 city = cityDB;
             }
             });
-            await CustomerDB.createCustomer(client, lastname, firstname, birthdate, gender, phonenumber, email, password, inscriptiondate, isinstructor, language, address, city_name, zip_code, country);
+            await CustomerDB.createCustomer(client, lastname, firstname, birthdate, gender, phonenumber, email, password, isinstructor, language, address, city_name, zip_code, country);
             res.sendStatus(201);
         } catch (error) {
             console.log(error);

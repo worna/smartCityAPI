@@ -29,7 +29,8 @@ const Customer = sequelize.define('customer', {
         type: DataTypes.STRING
     },
     inscription_date: {
-        type: DataTypes.DATE
+        type: DataTypes.DATE,
+        defaultValue: sequelize.NOW
     },
     is_manager: {
         type: DataTypes.INTEGER

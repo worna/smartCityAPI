@@ -1,6 +1,8 @@
 const CustomerORM = require('../ORM/model/Customer');
 const CourseORM = require('../ORM/model/Course');
 const CustomerCourseORM = require('../ORM/model/CustomerCourse');
+const SportHallORM = require ('../ORM/model/SportHall');
+const RoomORM = require('../ORM/model/Room');
 const sequelize = require("../ORM/sequelize");
 const {Sequelize} = require("sequelize");
 
@@ -84,7 +86,31 @@ module.exports.getCoursesOfCustomer = async (req, res) => {
         if(coursesOfCustomer !== null){
             const courses = [];
             for (const courseOfCustomer of coursesOfCustomer) {
-                const course = await CourseORM.findOne({where: {id: courseOfCustomer.id_course}});
+                const courseDB = await CourseORM.findOne({where: {id: courseOfCustomer.id_course}});
+                const {id, id_sport_hall, id_room, starting_date_time, ending_date_time, level, activity, instructor} = courseDB;
+                const sportHall = await SportHallORM.findOne({where: {id: id_sport_hall}});
+                const {name} = sportHall;
+                const room = await RoomORM.findOne({where: {id_room: id_room, id_sport_hall: id_sport_hall}});
+                const {max_capacity} = room;
+                const instructorDB = await CustomerORM.findOne({where: {email: instructor}});
+                const {last_name, first_name, email} = instructorDB;
+                const course = {
+                    id: id,
+                    sportHall: name,
+                    room: {
+                        id_room,
+                        max_capacity,
+                    },
+                    starting_date_time: starting_date_time,
+                    ending_date_time: ending_date_time,
+                    level: level,
+                    activity: activity,
+                    instructor: {
+                        last_name,
+                        first_name,
+                        email
+                    },
+                }
                 courses.push({course});
             }
             res.json(courses);

@@ -1,9 +1,9 @@
 const {getHash} = require("../utils/utils");
 
-module.exports.createCustomer = async (client, firstName, lastName, birthDate, gender, phoneNumber, email, password, inscriptionDate, isInstructor, language, address, city_name, zip_code, country) => {
+module.exports.createCustomer = async (client, firstName, lastName, birthDate, gender, phoneNumber, email, password,  isInstructor, language, address, city_name, zip_code, country) => {
     return await client.query(`
         INSERT INTO customer(first_name, last_name, birth_date, gender, phone_number, email, password, inscription_date, is_manager, is_instructor, language , address, city_name, zip_code, country)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 0, $9, $10, $11, $12, $13, $14)`, [firstName, lastName, birthDate, gender, phoneNumber, email, await getHash(password), inscriptionDate, isInstructor, language, address, city_name, zip_code, country]
+        VALUES ($1, $2, $3, $4, $5, $6, $7, current_timestamp, 0, $8, $9, $10, $11, $12, $13)`, [firstName, lastName, birthDate, gender, phoneNumber, email, await getHash(password), isInstructor, language, address, city_name, zip_code, country]
     );
 }
 module.exports.customerExist = async (client, email) => {

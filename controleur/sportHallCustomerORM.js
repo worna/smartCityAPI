@@ -101,7 +101,13 @@ module.exports.getCustomersInSportHall = async (req, res) => {
             if(customersInSportHall !== null){
                 const customers = [];
                 for (const customerInSportHall of customersInSportHall) {
-                    const customer = await CustomerORM.findOne({where: {id: customerInSportHall.id_customer}});
+                    const customerDB = await CustomerORM.findOne({where: {id: customerInSportHall.id_customer}});
+                    const {last_name, first_name, email} = customerDB;
+                    const customer = {
+                        last_name,
+                        first_name,
+                        email
+                    }
                     customers.push({customer});
                 }
                 res.json(customers);
@@ -132,8 +138,9 @@ module.exports.getSportHallsOfCustomer = async (req, res) => {
             if (sportHallsOfCustomer !== null) {
                 const sportHalls = [];
                 for (const sportHallOfCustomer of sportHallsOfCustomer) {
-                    const sportHall = await SportHallORM.findOne({where: {id: sportHallOfCustomer.id_sport_hall}});
-                    sportHalls.push({sportHall});
+                    const sportHallDB = await SportHallORM.findOne({where: {id: sportHallOfCustomer.id_sport_hall}});
+                    const {name} = sportHallDB;
+                    sportHalls.push({name});
                 }
                 res.json(sportHalls);
             } else {

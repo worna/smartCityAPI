@@ -42,9 +42,26 @@ module.exports.getSportHall = async (req, res) => {
             console.log("The id is not a number");
             res.sendStatus(400);
         } else {
-            const sportHall = await SportHallORM.findOne({where: {id: id}});
-            if(sportHall !== null){
-                res.json(sportHall);
+            const sportHallDB = await SportHallORM.findOne({where: {id: id}});
+            if(sportHallDB !== null){
+                const {id, name, manager, phone_number, email: email_sh, address, city_name, zip_code, country} = sportHallDB;
+                const managerDB = await CustomerORM.findOne({where: {email: manager}});
+                const {last_name, first_name, email} = managerDB;
+                res.json({
+                    id,
+                    name,
+                    manager: {
+                        last_name,
+                        first_name,
+                        email
+                    },
+                    phone_number,
+                    email_sh,
+                    address,
+                    city_name,
+                    zip_code,
+                    country
+                });
             } else {
                 console.log("Impossible to find the sport hall");
                 res.sendStatus(404);

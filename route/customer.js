@@ -4,6 +4,7 @@ const AuthoMiddleware = require("../middleware/Authorization");
 const Router = require("express-promise-router");
 const router = new Router;
 
+router.get('/', CustomerControleur.getAllCustomers);
 /**
  * @swagger
  * /customer:
