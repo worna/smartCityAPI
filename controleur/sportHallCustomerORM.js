@@ -123,31 +123,27 @@ module.exports.getCustomersInSportHall = async (req, res) => {
 }
 
 module.exports.getSportHallsOfCustomer = async (req, res) => {
-    const idTexte = req.params.id;
-    const id = parseInt(idTexte);
+    const email = req.params.email;
     try {
-        if (isNaN(id)) {
-            console.log("The id is not a number");
-            res.sendStatus(400);
-        } else {
-            const customerDB = await CustomerORM.findOne({where: {id: id}});
-            if (customerDB === null) {
-                throw new Error("Customer id not valid");
-            }
-            const sportHallsOfCustomer = await SportHallCustomerORM.findAll({where: {id_customer: id}});
-            if (sportHallsOfCustomer !== null) {
-                const sportHalls = [];
-                for (const sportHallOfCustomer of sportHallsOfCustomer) {
-                    const sportHallDB = await SportHallORM.findOne({where: {id: sportHallOfCustomer.id_sport_hall}});
-                    const {name} = sportHallDB;
-                    sportHalls.push({name});
-                }
-                res.json(sportHalls);
-            } else {
-                console.log("No sport hall for this customer");
-                res.sendStatus(404);
-            }
+        const customerDB = await CustomerORM.findOne({where: {email: email}});
+        if (customerDB === null) {
+            throw new Error("Customer email not valid");
         }
+        const {id} = customerDB;
+        const sportHallsOfCustomer = await SportHallCustomerORM.findAll({where: {id_customer: id}});
+        if (sportHallsOfCustomer !== null) {
+            const sportHalls = [];
+            for (const sportHallOfCustomer of sportHallsOfCustomer) {
+                const sportHallDB = await SportHallORM.findOne({where: {id: sportHallOfCustomer.id_sport_hall}});
+                const {name} = sportHallDB;
+                sportHalls.push({name});
+            }
+            res.json(sportHalls);
+        } else {
+            console.log("No sport hall for this customer");
+            res.sendStatus(404);
+        }
+
     } catch (error) {
         console.log(error);
         res.sendStatus(500);

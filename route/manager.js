@@ -20,7 +20,7 @@ const router = new Router;
  *              description: Server error
  *
  */
-router.post('/',JWTMiddleWare.identification, AuthoMiddleware.mustBeManager, ManagerControleur.postManager);
+router.post('/',JWTMiddleWare.identification, AuthoMiddleware.mustBeAdmin, ManagerControleur.postManager);
 
 /**
  * @swagger
@@ -43,6 +43,6 @@ router.post('/',JWTMiddleWare.identification, AuthoMiddleware.mustBeManager, Man
  *              description: Server error
  *
  */
-router.patch('/', JWTMiddleWare.identification, AuthoMiddleware.isMyAccount, CustomerControleur.updateCustomer);
+router.patch('/', JWTMiddleWare.identification, AuthoMiddleware.isMyAccountOrAdmin, CustomerControleur.updateCustomer);
 
 module.exports = router;

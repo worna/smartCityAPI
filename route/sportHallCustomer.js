@@ -1,5 +1,6 @@
 const SportHallCustomerControleur = require("../controleur/sportHallCustomerORM");
-
+const JWTMiddleWare = require("../middleware/IdentificationJWT");
+const AuthoMiddleware = require("../middleware/Authorization");
 const Router = require("express-promise-router");
 const router = new Router;
 
@@ -21,9 +22,7 @@ const router = new Router;
  *
  */
 router.post('/', SportHallCustomerControleur.postSportHallCustomer);
-
-router.get('/sportHall/:id', SportHallCustomerControleur.getCustomersInSportHall);
-router.get('/customer/:id', SportHallCustomerControleur.getSportHallsOfCustomer);
-
+router.get('/sportHall/:id', JWTMiddleWare.identification, AuthoMiddleware.mustBeAdminOrManager, SportHallCustomerControleur.getCustomersInSportHall);
+router.get('/customer/:email', SportHallCustomerControleur.getSportHallsOfCustomer);
 router.delete('/', SportHallCustomerControleur.deleteSportHallCustomer);
 module.exports = router;

@@ -178,7 +178,7 @@ module.exports.updateSportHall = async (req, res) => {
         await sequelize.transaction( {
             deferrable:  Sequelize.Deferrable.SET_DEFERRED
         }, async (t) => {
-        const managerDB = await CustomerORM.findOne({where: {id: manager}});
+        const managerDB = await CustomerORM.findOne({where: {email: manager}});
         if(managerDB === null){
             throw new Error("Manager id not valid");
         }

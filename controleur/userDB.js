@@ -47,8 +47,9 @@ module.exports.login = async (req, res) => {
                 const {id, email} = value;
                 const sport_halls = await managerDB.getSportHallIds(client, email);
                 const sport_halls_ids = [];
-                for(const sport_hall of Object.keys(sport_halls.rows)) {
-                    sport_halls_ids.push(sport_hall);
+                for(const sport_hall of sport_halls.rows) {
+                    const {id_sport_hall} = sport_hall;
+                    sport_halls_ids.push(id_sport_hall);
                 }
 
                 const payload = {status: userType, value: {email, sport_halls_ids}};

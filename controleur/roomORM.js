@@ -39,7 +39,7 @@ module.exports.getRoom = async (req, res) => {
 
 module.exports.postRoom = async (req, res) => {
     const body = req.body;
-    const {id_room, id_sport_hall, max_capacity} = body;
+        const {id_room, id_sport_hall, max_capacity} = body;
     try{
         await sequelize.transaction( {
             deferrable:  Sequelize.Deferrable.SET_DEFERRED
