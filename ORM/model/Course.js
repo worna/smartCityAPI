@@ -2,7 +2,9 @@ const {DataTypes, Deferrable} = require('sequelize');
 const sequelize = require('../sequelize');
 const SportHall = require('./SportHall');
 const Customer = require('./Customer');
+const CustomerCourse = require('./CustomerCourse');
 const Room = require('./Room');
+
 
 const Course = sequelize.define('course', {
     id: {
@@ -45,11 +47,10 @@ const Course = sequelize.define('course', {
             key: 'email',
             deferrable: Deferrable.INITIALLY_IMMEDIATE
         },
-    }
-
+    },
 }, {
     timestamps: false,
-    freezeTableName: true
+    freezeTableName: true,
 });
 
 module.exports = Course;

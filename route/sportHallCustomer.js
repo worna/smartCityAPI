@@ -21,8 +21,8 @@ const router = new Router;
  *              description: Erreur serveur
  *
  */
-router.post('/', SportHallCustomerControleur.postSportHallCustomer);
+router.post('/', JWTMiddleWare.identification, AuthoMiddleware.isMyAccountOrAdmin, SportHallCustomerControleur.postSportHallCustomer);
 router.get('/sportHall/:id', JWTMiddleWare.identification, AuthoMiddleware.mustBeAdminOrManager, SportHallCustomerControleur.getCustomersInSportHall);
-router.get('/customer/:email', SportHallCustomerControleur.getSportHallsOfCustomer);
-router.delete('/', SportHallCustomerControleur.deleteSportHallCustomer);
+router.get('/customer/:email', JWTMiddleWare.identification, AuthoMiddleware.mustBeAdmin, SportHallCustomerControleur.getSportHallsOfCustomer);
+router.delete('/', JWTMiddleWare.identification, AuthoMiddleware.isMyAccountOrAdmin, SportHallCustomerControleur.deleteSportHallCustomer);
 module.exports = router;

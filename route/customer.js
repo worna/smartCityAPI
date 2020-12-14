@@ -4,7 +4,7 @@ const AuthoMiddleware = require("../middleware/Authorization");
 const Router = require("express-promise-router");
 const router = new Router;
 
-router.get('/', CustomerControleur.getAllCustomers);
+router.get('/', JWTMiddleWare.identification, AuthoMiddleware.mustBeAdmin, CustomerControleur.getAllCustomers);
 /**
  * @swagger
  * /customer:

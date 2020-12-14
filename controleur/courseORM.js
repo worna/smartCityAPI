@@ -30,8 +30,8 @@ module.exports.getCourse = async (req, res) => {
                         id_room,
                         max_capacity,
                     },
-                    starting_date_time: starting_date_time,
-                    ending_date_time: ending_date_time,
+                    starting_date_time: starting_date_time.toLocaleString(),
+                    ending_date_time: ending_date_time.toLocaleString(),
                     level: level,
                     activity: activity,
                     instructor: {
@@ -59,6 +59,15 @@ module.exports.postCourse = async (req, res) => {
         await sequelize.transaction( {
             deferrable:  Sequelize.Deferrable.SET_DEFERRED
         }, async (t) => {
+        const instructorDB = await CustomerORM.findOne({where: {email: instructor}});
+        if (instructorDB === null){
+            throw new Error("Instructor email not valid");
+        } else {
+            const {is_instructor} = instructorDB;
+            if(is_instructor != 1) {
+                CustomerORM.update({is_instructor : 1},{where:{email: instructor}});
+            }
+        }
         const roomDB = await RoomORM.findOne({where: {id_room: id_room, id_sport_hall: id_sport_hall}});
         if(roomDB === null){
             throw new Error("Room or sporthall id not valid");
@@ -108,7 +117,7 @@ module.exports.postCourse = async (req, res) => {
                     ]
             }
             });
-            if(currentCourseDB === null){
+            if(currentCourseDB !== null){
                 throw new Error("Already a course at this period");
             }
         const customerDB = await CustomerORM.findOne({where: {email: instructor}});

@@ -4,7 +4,8 @@ const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, pr
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     dialect: 'postgres',
-    omitNull: true
+    omitNull: true,
+    timezone: '+01:00'
 });
 
 module.exports = sequelize;

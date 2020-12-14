@@ -3,6 +3,8 @@ const sequelize = require('../sequelize');
 const Customer = require('./Customer');
 const Course = require('./Course');
 
+
+
 const CustomerCourse = sequelize.define('customer_course', {
     email_customer: {
         type: DataTypes.STRING,
@@ -26,5 +28,7 @@ const CustomerCourse = sequelize.define('customer_course', {
     timestamps: false,
     freezeTableName: true
 });
+
+
 
 module.exports = CustomerCourse;

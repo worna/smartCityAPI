@@ -104,14 +104,14 @@ module.exports.postSportHall = async (req, res) => {
         await sequelize.transaction( {
             deferrable:  Sequelize.Deferrable.SET_DEFERRED
         }, async (t) => {
-        const managerDB = await CustomerORM.findOne({where: {email: manager, is_manager: 1}});
+        const managerDB = await CustomerORM.findOne({where: {email: manager}});
         if (managerDB === null){
-            const customerDB = await CustomerORM.findOne({where: {email: manager, is_manager: 0}});
-            if (customerDB === null){
                 throw new Error("Manager email not valid");
             } else {
-                CustomerORM.update({is_manager : 1},{where:{email: manager}});
-            }
+                const {is_manager} = managerDB;
+                if(is_manager != 1) {
+                    CustomerORM.update({is_manager : 1},{where:{email: manager}});
+                }
         }
         const cityDB = await CityORM.findOne({where: {city_name: city_name, zip_code: zip_code, country: country}});
         if(cityDB === null){
