@@ -3,7 +3,7 @@ const CustomerORM = require ('../ORM/model/Customer');
 const SportHallORM = require ('../ORM/model/SportHall');
 const RoomORM = require('../ORM/model/Room');
 const sequelize = require("../ORM/sequelize");
-const {Sequelize} = require("sequelize");
+const {Op, Sequelize} = require("sequelize");
 
 
 module.exports.getCourse = async (req, res) => {
@@ -63,6 +63,54 @@ module.exports.postCourse = async (req, res) => {
         if(roomDB === null){
             throw new Error("Room or sporthall id not valid");
         }
+        const currentCourseDB = await CourseORM.findOne(
+            {
+                where: {
+                    id_sport_hall : id_sport_hall,
+                    id_room : id_room,
+                    [Op.or] : [
+                        {
+                            [Op.and]: [
+                                { starting_date_time:{
+                                        [Op.gte]: starting_date_time
+                                    }
+                                },
+                                { starting_date_time:{
+                                        [Op.lt]: ending_date_time
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            [Op.and]: [
+                                { starting_date_time:{
+                                        [Op.lte]: starting_date_time
+                                    }
+                                },
+                                { ending_date_time:{
+                                        [Op.gte]: ending_date_time
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            [Op.and]: [
+                                { ending_date_time:{
+                                        [Op.gt]: starting_date_time
+                                    }
+                                },
+                                { ending_date_time:{
+                                        [Op.lte]: ending_date_time
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+            }
+            });
+            if(currentCourseDB === null){
+                throw new Error("Already a course at this period");
+            }
         const customerDB = await CustomerORM.findOne({where: {email: instructor}});
         if(customerDB === null){
             throw new Error("Instructor id not valid");
@@ -82,8 +130,10 @@ module.exports.postCourse = async (req, res) => {
         console.log(error);
         if(error.message === "Room or sporthall id not valid"){
             res.status(404).send("The room or the sporthall id is not valid");
-        }else if(error.message === "Instructor id not valid"){
+        } else if(error.message === "Instructor id not valid"){
             res.status(404).send("The instructor id is not valid");
+        } else if (error.message === "Already a course at this period"){
+            res.status(404).send("You can't add a course at this moment because there is an other one");
         } else{
             res.sendStatus(500);
         }
