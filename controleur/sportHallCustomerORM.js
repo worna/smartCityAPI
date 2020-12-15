@@ -3,6 +3,8 @@ const SportHallCustomerORM = require("../ORM/model/SportHallCustomer");
 const SportHallORM = require("../ORM/model/SportHall");
 const sequelize = require("../ORM/sequelize");
 const {Sequelize} = require("sequelize");
+
+
 /**
  * @swagger
  * components:
@@ -85,6 +87,7 @@ module.exports.postSportHallCustomer = async (req, res) => {
     }
 }
 
+// faire swagger
 module.exports.getCustomersInSportHall = async (req, res) => {
     const idTexte = req.params.id;
     const id = parseInt(idTexte);
@@ -122,6 +125,7 @@ module.exports.getCustomersInSportHall = async (req, res) => {
     }
 }
 
+// faire swagger
 module.exports.getSportHallsOfCustomer = async (req, res) => {
     const email = req.params.email;
     try {
@@ -150,6 +154,13 @@ module.exports.getSportHallsOfCustomer = async (req, res) => {
     }
 }
 
+/**
+ *@swagger
+ *components:
+ *  responses:
+ *      SportHallCustomerDeleted:
+ *          description: The sporthall customer has been deleted
+ */
 module.exports.deleteSportHallCustomer = async (req, res) => {
     const {sportHall, customer} = req.body;
     try{

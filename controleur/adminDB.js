@@ -3,6 +3,27 @@ const pool = require('../modele/database');
 const AdminModele = require("../modele/adminDB");
 
 
+/**
+ * @swagger
+ *  components:
+ *      responses:
+ *          AdminAdd:
+ *              description: The admin has been  added to database
+ *      requestBodies:
+ *          AdminToAdd:
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          properties:
+ *                              email:
+ *                                  type: string
+ *                              password:
+ *                                  type: string
+ *                                  format: password
+ *                          required:
+ *                              - email
+ *                              - password
+ */
 module.exports.postAdmin = async (req, res) => {
     const {email, password} = req.body;
     if(email === undefined || password === undefined){

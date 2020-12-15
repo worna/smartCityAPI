@@ -5,6 +5,8 @@ const CityORM = require('../ORM/model/City');
 const sequelize = require("../ORM/sequelize");
 const {Sequelize} = require("sequelize");
 
+
+// faire swagger
 module.exports.getAllCustomers = async (req, res) => {
     const allCustomers = await CustomerORM.findAll();
     const customers = [];
@@ -30,6 +32,103 @@ module.exports.getAllCustomers = async (req, res) => {
     }
     res.json(customers);
 };
+
+/**
+ * @swagger
+ *  components:
+ *      responses:
+ *          AddCustomer:
+ *              description: The customer has been  added to database
+ *      requestBodies:
+ *          CustomerToAdd:
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          properties:
+ *                              firstname:
+ *                                  type: string
+ *                              lastname:
+ *                                  type: string
+ *                              birthdate:
+ *                                  type: string
+ *                                  format: date
+ *                              gender:
+ *                                  type: integer
+ *                              phonenumber:
+ *                                  type: string
+ *                              email:
+ *                                  type: string
+ *                              password:
+ *                                  type: string
+ *                                  format: password
+ *                              inscriptiondate:
+ *                                  type: string
+ *                                  format: date
+ *                              ismanager:
+ *                                  type: integer
+ *                              isinstructor:
+ *                                  type: integer
+ *                              language:
+ *                                  type: string
+ *                          required:
+ *                              - firstname
+ *                              - lastname
+ *                              - birthdate
+ *                              - gender
+ *                              - phonenumber
+ *                              - email
+ *                              - password
+ *                              - inscriptiondate
+ *                              - ismanager
+ *                              - isinstructor
+ *                              - language
+ */
+module.exports.postCustomer = async (req, res) => {
+    const lastname = req.body.last_name;
+    const firstname = req.body.first_name;
+    const birthdate = req.body.birth_date;
+    const gender = req.body.gender;
+    const phonenumber= req.body.phone_number;
+    const email = req.body.email;
+    const password = req.body.password;
+    const isinstructor = req.body.is_instructor;
+    const language = req.body.language;
+    const address = req.body.address;
+    const city_name = req.body.city_name;
+    const zip_code = req.body.zip_code;
+    const country = req.body.country;
+
+    if(lastname === undefined || firstname === undefined || birthdate === undefined || gender === undefined || phonenumber === undefined || email === undefined || password === undefined || isinstructor === undefined || language === undefined || address === undefined || city_name === undefined || zip_code === undefined || country === undefined){
+        console.log("Parameters are wrong or empty");
+        res.sendStatus(400);
+    } else {
+        const client = await pool.connect();
+        try {
+            await sequelize.transaction( {
+                deferrable:  Sequelize.Deferrable.SET_DEFERRED
+            }, async (t) => {
+                const cityDB = await CityORM.findOne({where: {city_name: city_name, zip_code: zip_code, country: country}});
+                if(cityDB === null){
+                    city = await CityORM.create({
+                        city_name,
+                        zip_code,
+                        country
+                    }, {transaction: t});
+                } else {
+                    city = cityDB;
+                }
+            });
+            await CustomerDB.createCustomer(client, lastname, firstname, birthdate, gender, phonenumber, email, password, isinstructor, language, address, city_name, zip_code, country);
+            res.sendStatus(201);
+        } catch (error) {
+            console.log(error);
+            res.sendStatus(500);
+        } finally {
+            client.release();
+        }
+    }
+};
+
 /**
  * @swagger
  *  components:
@@ -150,101 +249,5 @@ module.exports.updateCustomer = async (req, res) => {
     } else {
         console.log("You are not connected!");
         res.sendStatus(401);
-    }
-};
-
-/**
- * @swagger
- *  components:
- *      responses:
- *          CustomerAdd:
- *              description: The customer has been  added to database
- *      requestBodies:
- *          CustomerToAdd:
- *              content:
- *                  application/json:
- *                      schema:
- *                          properties:
- *                              firstname:
- *                                  type: string
- *                              lastname:
- *                                  type: string
- *                              birthdate:
- *                                  type: string
- *                                  format: date
- *                              gender:
- *                                  type: integer
- *                              phonenumber:
- *                                  type: string
- *                              email:
- *                                  type: string
- *                              password:
- *                                  type: string
- *                                  format: password
- *                              inscriptiondate:
- *                                  type: string
- *                                  format: date
- *                              ismanager:
- *                                  type: integer
- *                              isinstructor:
- *                                  type: integer
- *                              language:
- *                                  type: string
- *                          required:
- *                              - firstname
- *                              - lastname
- *                              - birthdate
- *                              - gender
- *                              - phonenumber
- *                              - email
- *                              - password
- *                              - inscriptiondate
- *                              - ismanager
- *                              - isinstructor
- *                              - language
- */
-module.exports.postCustomer = async (req, res) => {
-    const lastname = req.body.last_name;
-    const firstname = req.body.first_name;
-    const birthdate = req.body.birth_date;
-    const gender = req.body.gender;
-    const phonenumber= req.body.phone_number;
-    const email = req.body.email;
-    const password = req.body.password;
-    const isinstructor = req.body.is_instructor;
-    const language = req.body.language;
-    const address = req.body.address;
-    const city_name = req.body.city_name;
-    const zip_code = req.body.zip_code;
-    const country = req.body.country;
-
-    if(lastname === undefined || firstname === undefined || birthdate === undefined || gender === undefined || phonenumber === undefined || email === undefined || password === undefined || isinstructor === undefined || language === undefined || address === undefined || city_name === undefined || zip_code === undefined || country === undefined){
-        console.log("Parameters are wrong or empty");
-        res.sendStatus(400);
-    } else {
-        const client = await pool.connect();
-        try {
-            await sequelize.transaction( {
-                deferrable:  Sequelize.Deferrable.SET_DEFERRED
-            }, async (t) => {
-            const cityDB = await CityORM.findOne({where: {city_name: city_name, zip_code: zip_code, country: country}});
-            if(cityDB === null){
-                city = await CityORM.create({
-                    city_name,
-                    zip_code,
-                    country
-                }, {transaction: t});
-            } else {
-                city = cityDB;
-            }
-            });
-            await CustomerDB.createCustomer(client, lastname, firstname, birthdate, gender, phonenumber, email, password, isinstructor, language, address, city_name, zip_code, country);
-            res.sendStatus(201);
-        } catch (error) {
-            console.log(error);
-            res.sendStatus(500);
-        } finally {
-            client.release();
-        }
     }
 };

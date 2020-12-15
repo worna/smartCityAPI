@@ -4,7 +4,30 @@ const AuthoMiddleware = require("../middleware/Authorization");
 const Router = require("express-promise-router");
 const router = new Router;
 
+/**
+ * @swagger
+ * /customer/{id}:
+ *  get:
+ *      tags:
+ *         - Customer
+ *      parameters:
+ *          - name: id
+ *            description: customer's ID
+ *            in: path
+ *            required: true
+ *            schema:
+ *              type: integer
+ *      responses:
+ *          200:
+ *              $ref: '#/components/responses/CustomerFound'
+ *          404:
+ *              description: Customer not found
+ *          500:
+ *              description: Server error
+ *
+ */
 router.get('/', JWTMiddleWare.identification, AuthoMiddleware.mustBeAdmin, CustomerControleur.getAllCustomers);
+
 /**
  * @swagger
  * /customer:
@@ -39,6 +62,8 @@ router.post('/', CustomerControleur.postCustomer);
  *              $ref: '#/components/responses/ErrorJWT'
  *          401:
  *              $ref: '#/components/responses/MissingJWT'
+ *          403:
+ *              $ref: '#/components/responses/isMyAccount'
  *          500:
  *              description: Server error
  *

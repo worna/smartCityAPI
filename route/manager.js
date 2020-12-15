@@ -7,15 +7,23 @@ const router = new Router;
 
 /**
  * @swagger
- * /customer:
+ * /manager:
  *  post:
  *      tags:
- *          - Customer
+ *          - Manager
+ *      security:
+ *          - bearerAuth: []
  *      requestBody:
- *          $ref: '#/components/requestBodies/CustomerToAdd'
+ *          $ref: '#/components/requestBodies/ManagerToAdd'
  *      responses:
  *          201:
- *              $ref: '#/components/responses/CustomerAdd'
+ *              $ref: '#/components/responses/ManagerAdd'
+ *          400:
+ *              $ref: '#/components/responses/ErrorJWT'
+ *          401:
+ *              $ref: '#/components/responses/MissingJWT'
+ *          403:
+ *              $ref: '#/components/responses/mustBeAdmin'
  *          500:
  *              description: Server error
  *
@@ -24,21 +32,23 @@ router.post('/',JWTMiddleWare.identification, AuthoMiddleware.mustBeAdmin, Manag
 
 /**
  * @swagger
- * /customer:
+ * /manager:
  *  patch:
  *      tags:
- *          - Customer
+ *          - Manager
  *      security:
  *          - bearerAuth: []
  *      requestBody:
- *          $ref: '#/components/requestBodies/CustomerToUpdate'
+ *          $ref: '#/components/requestBodies/ManagerToUpdate'
  *      responses:
  *          204:
- *              $ref: '#/components/responses/CustomerUpdated'
+ *              $ref: '#/components/responses/ManagerUpdated'
  *          400:
  *              $ref: '#/components/responses/ErrorJWT'
  *          401:
  *              $ref: '#/components/responses/MissingJWT'
+ *          403:
+ *              $ref: '#/components/responses/isMyAccountOrAdmin'
  *          500:
  *              description: Server error
  *

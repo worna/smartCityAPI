@@ -4,6 +4,31 @@ const sequelize = require("../ORM/sequelize");
 const {Sequelize} = require("sequelize");
 
 
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *      Room:
+ *          type: object
+ *          properties:
+ *              id_room:
+ *                  type: integer
+ *              id_sport_hall:
+ *                  type: integer
+ *              max_capacity:
+ *                  type: integer
+ */
+/**
+ * @swagger
+ * components:
+ *  responses:
+ *      RoomFound:
+ *           description: send a room
+ *           content:
+ *               application/json:
+ *                   schema:
+ *                       $ref: '#/components/schemas/Room'
+ */
 module.exports.getRoom = async (req, res) => {
     const idTexte = req.params.id;
     const id = idTexte.split('-');
@@ -37,6 +62,26 @@ module.exports.getRoom = async (req, res) => {
     }
 }
 
+/**
+ *@swagger
+ *components:
+ *  responses:
+ *      AddRoom:
+ *          description: The room has been added
+ *  requestBodies:
+ *      RoomToAdd:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          id_room:
+ *                              type: integer
+ *                          id_sport_hall:
+ *                              type: integer
+ *                          max_capacity:
+ *                              type: integer
+ */
 module.exports.postRoom = async (req, res) => {
     const body = req.body;
         const {id_room, id_sport_hall, max_capacity} = body;
@@ -66,6 +111,26 @@ module.exports.postRoom = async (req, res) => {
     }
 }
 
+/**
+ *@swagger
+ *components:
+ *  responses:
+ *      RoomUpdated:
+ *          description: The room has been updated
+ *  requestBodies:
+ *      RoomToUpdate:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          id_room:
+ *                              type: integer
+ *                          id_sport_hall:
+ *                              type: integer
+ *                          max_capacity:
+ *                              type: integer
+ */
 module.exports.updateRoom = async (req, res) => {
     const {id_room, id_sport_hall, max_capacity} = req.body;
     try{
@@ -90,6 +155,13 @@ module.exports.updateRoom = async (req, res) => {
     }
 }
 
+/**
+ *@swagger
+ *components:
+ *  responses:
+ *      RoomDeleted:
+ *          description: The room has been deleted
+ */
 module.exports.deleteRoom = async (req, res) => {
     const {id_room, id_sport_hall} = req.body;
     try{

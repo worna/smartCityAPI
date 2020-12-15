@@ -7,48 +7,43 @@ const sequelize = require("../ORM/sequelize");
 const {Op, Sequelize} = require("sequelize");
 
 
-module.exports.getCourses = async (req, res) => {
-
-    try{
-        const coursesDB = await CourseORM.findAll();
-        if(coursesDB !== null){
-            const courses = [];
-            for (const courseDB of coursesDB) {
-                const {id, id_sport_hall, id_room, starting_date_time, ending_date_time, level, activity, instructor} = courseDB;
-                const sportHall = await SportHallORM.findOne({where: {id: id_sport_hall}});
-                const {name} = sportHall;
-                const room = await RoomORM.findOne({where: {id_room: id_room, id_sport_hall: id_sport_hall}});
-                const {max_capacity} = room;
-                const instructorDB = await CustomerORM.findOne({where: {email: instructor}});
-                const {last_name, first_name, email} = instructorDB;
-                const course = {
-                    id: id,
-                    sportHall: name,
-                    room: {
-                        id_room,
-                        max_capacity,
-                    },
-                    starting_date_time: starting_date_time.toLocaleString(),
-                    ending_date_time: ending_date_time.toLocaleString(),
-                    level: level,
-                    activity: activity,
-                    instructor: {
-                        last_name,
-                        first_name,
-                        email
-                    },
-                }
-                courses.push(course);
-
-            }
-            res.json(courses);
-        }
-    } catch (error){
-        console.log(error);
-        res.sendStatus(500);
-    }
-}
-
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *      Course:
+ *          type: object
+ *          properties:
+ *              id:
+ *                  type: integer
+ *              id_sport_hall:
+ *                  type: integer
+ *              id_room:
+ *                  type: integer
+ *              starting_date_time:
+ *                  type: string
+ *                  format: datetime
+ *              ending_date_time:
+ *                  type: string
+ *                  format: datetime
+ *              level:
+ *                  type: string
+ *              activity:
+ *                  type: string
+ *              instructor:
+ *                  type: string
+ */
+/**
+ * @swagger
+ * components:
+ *  responses:
+ *      CourseFound:
+ *           description: send a course
+ *           content:
+ *               application/json:
+ *                   schema:
+ *                       $ref: '#/components/schemas/Course'
+ */
 module.exports.getCourse = async (req, res) => {
     const idTexte = req.params.id;
     const id = parseInt(idTexte);
@@ -95,6 +90,81 @@ module.exports.getCourse = async (req, res) => {
     }
 }
 
+// faire swagger
+module.exports.getCourses = async (req, res) => {
+
+    try{
+        const coursesDB = await CourseORM.findAll();
+        if(coursesDB !== null){
+            const courses = [];
+            for (const courseDB of coursesDB) {
+                const {id, id_sport_hall, id_room, starting_date_time, ending_date_time, level, activity, instructor} = courseDB;
+                const sportHall = await SportHallORM.findOne({where: {id: id_sport_hall}});
+                const {name} = sportHall;
+                const room = await RoomORM.findOne({where: {id_room: id_room, id_sport_hall: id_sport_hall}});
+                const {max_capacity} = room;
+                const instructorDB = await CustomerORM.findOne({where: {email: instructor}});
+                const {last_name, first_name, email} = instructorDB;
+                const course = {
+                    id: id,
+                    sportHall: name,
+                    room: {
+                        id_room,
+                        max_capacity,
+                    },
+                    starting_date_time: starting_date_time.toLocaleString(),
+                    ending_date_time: ending_date_time.toLocaleString(),
+                    level: level,
+                    activity: activity,
+                    instructor: {
+                        last_name,
+                        first_name,
+                        email
+                    },
+                }
+                courses.push(course);
+
+            }
+            res.json(courses);
+        }
+    } catch (error){
+        console.log(error);
+        res.sendStatus(500);
+    }
+}
+
+/**
+ *@swagger
+ *components:
+ *  responses:
+ *      AddCourse:
+ *          description: The course has been added
+ *  requestBodies:
+ *      CourseToAdd:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          id:
+ *                              type: integer
+ *                          id_sport_hall:
+ *                              type: integer
+ *                          id_room:
+ *                              type: integer
+ *                          starting_date_time:
+ *                              type: string
+ *                              format: datetime
+ *                          ending_date_time:
+ *                              type: string
+ *                              format: datetime
+ *                          level:
+ *                              type: string
+ *                          activity:
+ *                             type: string
+ *                          instructor:
+ *                              type: string
+ */
 module.exports.postCourse = async (req, res) => {
     const body = req.body;
     const {id_sport_hall, id_room, starting_date_time, ending_date_time, level, activity, instructor} = body;
@@ -192,6 +262,38 @@ module.exports.postCourse = async (req, res) => {
     }
 }
 
+/**
+ *@swagger
+ *components:
+ *  responses:
+ *      CourseUpdated:
+ *          description: The course has been updated
+ *  requestBodies:
+ *      CourseToUpdate:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          id:
+ *                              type: integer
+ *                          id_sport_hall:
+ *                              type: integer
+ *                          id_room:
+ *                              type: integer
+ *                          starting_date_time:
+ *                              type: string
+ *                              format: datetime
+ *                          ending_date_time:
+ *                              type: string
+ *                              format: datetime
+ *                          level:
+ *                              type: string
+ *                          activity:
+ *                             type: string
+ *                          instructor:
+ *                              type: string
+ */
 module.exports.updateCourse = async (req, res) => {
     const {id, id_sport_hall, starting_date_time, ending_date_time, level, activity, room, instructor} = req.body;
     try{
@@ -221,6 +323,13 @@ module.exports.updateCourse = async (req, res) => {
     }
 }
 
+/**
+ *@swagger
+ *components:
+ *  responses:
+ *      CourseDeleted:
+ *          description: The course has been deleted
+ */
 module.exports.deleteCourse = async (req, res) => {
     const {id} = req.body;
     try{

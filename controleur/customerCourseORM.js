@@ -6,38 +6,8 @@ const RoomORM = require('../ORM/model/Room');
 const sequelize = require("../ORM/sequelize");
 const {Sequelize} = require("sequelize");
 
-module.exports.postCustomerCourse = async (req, res) => {
-    const {email, course} = req.body;
-    try{
-        await sequelize.transaction( {
-            deferrable:  Sequelize.Deferrable.SET_DEFERRED
-        }, async (t) => {
-            const customerDB = await CustomerORM.findOne({where: {email: email}});
-            if(customerDB === null){
-                throw new Error("Customer email not valid");
-            }
-            const courseDB = await CourseORM.findOne({where: {id: course}});
-            if(courseDB === null){
-                throw new Error("Course id not valid");
-            }
-            await CustomerCourseORM.create({
-                email_customer: email,
-                id_course: course
-            }, {transaction: t});
-        });
-        res.sendStatus(201);
-    } catch (error){
-        console.log(error);
-        if(error.message === "Course id not valid"){
-            res.status(404).send( "The course id is not valid");
-        }else if(error.message === "Customer email not valid"){
-            res.status(404).send("The customer email is not valid");
-        } else{
-            res.sendStatus(500);
-        }
-    }
-}
 
+// faire swagger
 module.exports.getCustomersInCourse = async (req, res) => {
     const idTexte = req.params.id;
     const id = parseInt(idTexte);
@@ -75,6 +45,7 @@ module.exports.getCustomersInCourse = async (req, res) => {
     }
 }
 
+// faire swagger
 module.exports.getCoursesOfCustomer = async (req, res) => {
     const email = req.params.email;
     try{
@@ -124,6 +95,63 @@ module.exports.getCoursesOfCustomer = async (req, res) => {
     }
 }
 
+/**
+ *@swagger
+ *components:
+ *  responses:
+ *      AddCustomerCourse:
+ *          description: The customer course has been added
+ *  requestBodies:
+ *      CustomerCourseToAdd:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          email_customer:
+ *                              type: string
+ *                          id_course:
+ *                              type: integer
+ */
+module.exports.postCustomerCourse = async (req, res) => {
+    const {email, course} = req.body;
+    try{
+        await sequelize.transaction( {
+            deferrable:  Sequelize.Deferrable.SET_DEFERRED
+        }, async (t) => {
+            const customerDB = await CustomerORM.findOne({where: {email: email}});
+            if(customerDB === null){
+                throw new Error("Customer email not valid");
+            }
+            const courseDB = await CourseORM.findOne({where: {id: course}});
+            if(courseDB === null){
+                throw new Error("Course id not valid");
+            }
+            await CustomerCourseORM.create({
+                email_customer: email,
+                id_course: course
+            }, {transaction: t});
+        });
+        res.sendStatus(201);
+    } catch (error){
+        console.log(error);
+        if(error.message === "Course id not valid"){
+            res.status(404).send( "The course id is not valid");
+        }else if(error.message === "Customer email not valid"){
+            res.status(404).send("The customer email is not valid");
+        } else{
+            res.sendStatus(500);
+        }
+    }
+}
+
+/**
+ *@swagger
+ *components:
+ *  responses:
+ *      CustomerCourseDeleted:
+ *          description: The customer course has been deleted
+ */
 module.exports.deleteCustomerCourse = async (req, res) => {
     const {email_customer, course} = req.body;
     try{
