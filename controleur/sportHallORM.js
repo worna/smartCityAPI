@@ -4,6 +4,45 @@ const CityORM = require('../ORM/model/City');
 const sequelize = require("../ORM/sequelize");
 const {Sequelize} = require("sequelize");
 
+
+module.exports.getSportHalls = async (req, res) => {
+
+    try{
+        const sportHallsDB = await SportHallORM.findAll();
+        if(sportHallsDB !== null){
+            const sportHalls = [];
+            for (const sportHallDB of sportHallsDB) {
+                const {id, name, manager, phone_number, email: email_sh, address, city_name, zip_code, country} = sportHallDB;
+                const managerDB = await CustomerORM.findOne({where: {email: manager}});
+                const {last_name, first_name, email} = managerDB;
+                const sportHall = {
+                    id,
+                    name,
+                    manager: {
+                        last_name,
+                        first_name,
+                        email
+                    },
+                    phone_number,
+                    email_sh,
+                    address,
+                    city_name,
+                    zip_code,
+                    country
+                };
+                sportHalls.push(sportHall);
+            }
+            res.json(sportHalls);
+        } else {
+            console.log("No sport hall");
+            res.sendStatus(404);
+        }
+    } catch (error){
+        console.log(error);
+        res.sendStatus(500);
+    }
+}
+
 /**
  * @swagger
  * components:

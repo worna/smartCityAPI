@@ -4,6 +4,7 @@ const JWTMiddleWare = require("../middleware/IdentificationJWT");
 const AuthoMiddleware = require("../middleware/Authorization");
 const router = new Router;
 
+router.get('/', SportHallControleur.getSportHalls);
 /**
  * @swagger
  * /sportHall/{id}:
