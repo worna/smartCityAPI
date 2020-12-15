@@ -14,6 +14,7 @@ const Course = sequelize.define('course', {
     },
     id_sport_hall: {
         type: DataTypes.INTEGER,
+        allowNull: false,
         references: {
             model: Room,
             key: 'id_sport_hall',
@@ -22,6 +23,7 @@ const Course = sequelize.define('course', {
     },
     id_room: {
         type: DataTypes.INTEGER,
+        allowNull: false,
         references: {
             model: Room,
             key: 'id_room',
@@ -29,19 +31,24 @@ const Course = sequelize.define('course', {
         },
     },
     starting_date_time: {
-        type: DataTypes.DATE
+        type: DataTypes.DATE,
+        allowNull: false,
     },
     ending_date_time: {
-        type: DataTypes.DATE
+        type: DataTypes.DATE,
+        allowNull: false,
     },
     level: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     activity: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     instructor: {
         type: DataTypes.STRING,
+        allowNull: true,
         references: {
             model: Customer,
             key: 'email',

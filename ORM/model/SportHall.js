@@ -11,10 +11,13 @@ const SportHall = sequelize.define('sport_hall', {
         primaryKey: true,
     },
     name: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
     },
     manager: {
         type: DataTypes.STRING,
+        allowNull: true,
         references: {
             model: Customer,
             key: 'email',
@@ -22,22 +25,28 @@ const SportHall = sequelize.define('sport_hall', {
         },
     },
     phone_number:{
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     email:{
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     address:{
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     city_name:{
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     zip_code:{
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        allowNull: false,
     },
     country:{
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false,
     },
 }, {
     timestamps: false,

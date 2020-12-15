@@ -17,7 +17,8 @@ const Room = sequelize.define('room', {
         },
     },
     max_capacity: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        allowNull: true,
     },
 
 }, {
