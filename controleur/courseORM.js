@@ -1,10 +1,53 @@
 const CourseORM = require('../ORM/model/Course');
 const CustomerORM = require ('../ORM/model/Customer');
+const CustomerCourseORM = require ('../ORM/model/CustomerCourse');
 const SportHallORM = require ('../ORM/model/SportHall');
 const RoomORM = require('../ORM/model/Room');
 const sequelize = require("../ORM/sequelize");
 const {Op, Sequelize} = require("sequelize");
 
+
+module.exports.getCourses = async (req, res) => {
+
+    try{
+        const coursesDB = await CourseORM.findAll();
+        if(coursesDB !== null){
+            const courses = [];
+            for (const courseDB of coursesDB) {
+                const {id, id_sport_hall, id_room, starting_date_time, ending_date_time, level, activity, instructor} = courseDB;
+                const sportHall = await SportHallORM.findOne({where: {id: id_sport_hall}});
+                const {name} = sportHall;
+                const room = await RoomORM.findOne({where: {id_room: id_room, id_sport_hall: id_sport_hall}});
+                const {max_capacity} = room;
+                const instructorDB = await CustomerORM.findOne({where: {email: instructor}});
+                const {last_name, first_name, email} = instructorDB;
+                const course = {
+                    id: id,
+                    sportHall: name,
+                    room: {
+                        id_room,
+                        max_capacity,
+                    },
+                    starting_date_time: starting_date_time.toLocaleString(),
+                    ending_date_time: ending_date_time.toLocaleString(),
+                    level: level,
+                    activity: activity,
+                    instructor: {
+                        last_name,
+                        first_name,
+                        email
+                    },
+                }
+                courses.push(course);
+
+            }
+            res.json(courses);
+        }
+    } catch (error){
+        console.log(error);
+        res.sendStatus(500);
+    }
+}
 
 module.exports.getCourse = async (req, res) => {
     const idTexte = req.params.id;
@@ -181,8 +224,13 @@ module.exports.updateCourse = async (req, res) => {
 module.exports.deleteCourse = async (req, res) => {
     const {id} = req.body;
     try{
-        await CourseORM.destroy({where: {id}});
-        res.sendStatus(204);
+        sequelize.transaction( {
+            deferrable:  Sequelize.Deferrable.SET_DEFERRED
+        }, async (t) => {
+            await CustomerCourseORM.destroy({where: {id_course : id}}, {transaction: t});
+            await CourseORM.destroy({where: {id}}, {transaction: t});
+            res.sendStatus(204);
+        });
     } catch (error){
         console.log(error);
         res.status(500).send(error.message);
