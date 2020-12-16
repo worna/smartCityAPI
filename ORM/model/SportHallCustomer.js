@@ -13,12 +13,12 @@ const SportHallCustomer = sequelize.define('sport_hall_customer', {
             deferrable: Deferrable.INITIALLY_IMMEDIATE
         }
     },
-    id_customer: {
-        type: DataTypes.INTEGER,
+    email_customer: {
+        type: DataTypes.STRING,
         primaryKey: true,
         references: {
             model: Customer,
-            key: 'id',
+            key: 'email',
             deferrable: Deferrable.INITIALLY_IMMEDIATE
         }
     }

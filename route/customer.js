@@ -70,4 +70,6 @@ router.post('/', CustomerControleur.postCustomer);
  */
 router.patch('/', JWTMiddleWare.identification, AuthoMiddleware.isMyAccount, CustomerControleur.updateCustomer);
 
+router.delete('/', JWTMiddleWare.identification, AuthoMiddleware.isMyAccountOrAdmin, CustomerControleur.deleteCustomer);
+
 module.exports = router;

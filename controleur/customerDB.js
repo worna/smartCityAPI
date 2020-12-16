@@ -2,6 +2,9 @@ const pool = require('../modele/database');
 const CustomerDB = require('../modele/customerDB');
 const CustomerORM = require('../ORM/model/Customer');
 const CityORM = require('../ORM/model/City');
+const CustomerCourseORM = require('../ORM/model/CustomerCourse');
+const SportHallCustomerORM = require('../ORM/model/SportHallCustomer');
+const CourseORM = require('../ORM/model/Course');
 const sequelize = require("../ORM/sequelize");
 const {Sequelize} = require("sequelize");
 
@@ -251,3 +254,21 @@ module.exports.updateCustomer = async (req, res) => {
         res.sendStatus(401);
     }
 };
+
+// faire swagger
+module.exports.deleteCustomer = async (req, res) => {
+    const {email} = req.body;
+    try{
+        sequelize.transaction( {
+            deferrable:  Sequelize.Deferrable.SET_DEFERRED
+        }, async (t) => {
+            await CustomerCourseORM.destroy({where: {email_customer : email}}, {transaction: t});
+            await SportHallCustomerORM.destroy({where: {email_customer: email}}, {transaction: t});
+            await CustomerORM.destroy({where: {email}}, {transaction: t});
+            res.sendStatus(204);
+        });
+    } catch (error){
+        console.log(error);
+        res.status(500).send(error.message);
+    }
+}

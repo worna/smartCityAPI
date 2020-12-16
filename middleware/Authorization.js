@@ -39,7 +39,7 @@ module.exports.isMyAccount = (req, res, next) => {
     }
 }
 module.exports.isMyAccountOrAdmin = (req, res, next) => {
-    if(req.session && (req.session.authLevel === "admin" || req.session.email === req.params.email || req.session.email === req.body.email_customer)){
+    if(req.session && (req.session.authLevel === "admin" || req.session.email === req.params.email || req.session.email === req.body.email_customer || req.session.email === req.body.email)){
         next();
     } else {
         console.log("It's must be your account");

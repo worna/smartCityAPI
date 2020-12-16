@@ -65,13 +65,13 @@ module.exports.postSportHallCustomer = async (req, res) => {
             if(sportHallDB === null){
                 throw new Error("Sport hall id not valid");
             }
-            const customerDB = await CustomerORM.findOne({where: {id: customer}});
+            const customerDB = await CustomerORM.findOne({where: {email: customer}});
             if(customerDB === null){
                 throw new Error("Customer id not valid");
             }
             await SportHallCustomerORM.create({
                 id_sport_hall: sportHall,
-                id_customer: customer
+                email_customer: customer
             }, {transaction: t});
         });
         res.sendStatus(201);
@@ -104,7 +104,7 @@ module.exports.getCustomersInSportHall = async (req, res) => {
             if(customersInSportHall !== null){
                 const customers = [];
                 for (const customerInSportHall of customersInSportHall) {
-                    const customerDB = await CustomerORM.findOne({where: {id: customerInSportHall.id_customer}});
+                    const customerDB = await CustomerORM.findOne({where: {email: customerInSportHall.email_customer}});
                     const {last_name, first_name, email} = customerDB;
                     const customer = {
                         last_name,
@@ -133,8 +133,8 @@ module.exports.getSportHallsOfCustomer = async (req, res) => {
         if (customerDB === null) {
             throw new Error("Customer email not valid");
         }
-        const {id} = customerDB;
-        const sportHallsOfCustomer = await SportHallCustomerORM.findAll({where: {id_customer: id}});
+        const {email} = customerDB;
+        const sportHallsOfCustomer = await SportHallCustomerORM.findAll({where: {email_customer: email}});
         if (sportHallsOfCustomer !== null) {
             const sportHalls = [];
             for (const sportHallOfCustomer of sportHallsOfCustomer) {
@@ -164,7 +164,7 @@ module.exports.getSportHallsOfCustomer = async (req, res) => {
 module.exports.deleteSportHallCustomer = async (req, res) => {
     const {sportHall, customer} = req.body;
     try{
-        await SportHallCustomerORM.destroy({where: {id_sport_hall: sportHall, id_customer: customer}});
+        await SportHallCustomerORM.destroy({where: {id_sport_hall: sportHall, email_customer: customer}});
         res.sendStatus(204);
     } catch (error){
         console.log(error);
