@@ -111,7 +111,7 @@ module.exports.getSportHalls = async (req, res) => {
         }
     } catch (error){
         console.log(error);
-        res.sendStatus(500);
+        res.status(500).send(error);
     }
 }
 
