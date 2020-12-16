@@ -89,12 +89,12 @@ module.exports.getSportHalls = async (req, res) => {
                     const {last_name, first_name, email} = managerDB;
                     managerObj = {last_name, first_name, email};
                 } else {
-                    managerObj = "null";
+                    managerObj = null;
                 }
                 const sportHall = {
                     id,
                     name,
-                    manager: managerObj,
+                    manager: "managerObj",
                     phone_number,
                     email_sh,
                     address,
