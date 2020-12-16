@@ -260,7 +260,7 @@ module.exports.deleteSportHall = async (req, res) => {
         res.sendStatus(204);
     } catch (error){
         console.log(error);
-        res.sendStatus(500);
+        res.status(500).send(error);
     }
 }
 
