@@ -6,6 +6,7 @@ module.exports.createCustomer = async (client, firstName, lastName, birthDate, g
         VALUES ($1, $2, $3, $4, $5, $6, $7, current_timestamp, 0, $8, $9, $10, $11, $12, $13)`, [firstName, lastName, birthDate, gender, phoneNumber, email, await getHash(password), isInstructor, language, address, city_name, zip_code, country]
     );
 }
+
 module.exports.customerExist = async (client, email) => {
     const {rows} = await client.query(
         "SELECT count(id) AS nbr FROM customer WHERE email = $1 AND is_manager = 0;",

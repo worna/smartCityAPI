@@ -16,7 +16,7 @@ const router = new Router;
  *          $ref: '#/components/requestBodies/AdminToAdd'
  *      responses:
  *          201:
- *              $ref: '#/components/responses/AddAdmin'
+ *              $ref: '#/components/responses/AdminAdd'
  *          400:
  *              $ref: '#/components/responses/ErrorJWT'
  *          401:

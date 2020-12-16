@@ -90,7 +90,26 @@ module.exports.getCourse = async (req, res) => {
     }
 }
 
-// faire swagger
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *      ArrayOfCourses:
+ *          type: array
+ *          items:
+ *              $ref: '#/components/schemas/Course'
+ */
+/**
+ * @swagger
+ * components:
+ *  responses:
+ *      CoursesFound:
+ *           description: send courses
+ *           content:
+ *               application/json:
+ *                   schema:
+ *                       $ref: '#/components/schemas/ArrayOfCourses'
+ */
 module.exports.getCourses = async (req, res) => {
 
     try{
@@ -137,7 +156,7 @@ module.exports.getCourses = async (req, res) => {
  *@swagger
  *components:
  *  responses:
- *      AddCourse:
+ *      CourseAdd:
  *          description: The course has been added
  *  requestBodies:
  *      CourseToAdd:
@@ -146,8 +165,6 @@ module.exports.getCourses = async (req, res) => {
  *                  schema:
  *                      type: object
  *                      properties:
- *                          id:
- *                              type: integer
  *                          id_sport_hall:
  *                              type: integer
  *                          id_room:

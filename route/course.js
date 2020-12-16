@@ -7,7 +7,7 @@ const router = new Router;
 
 /**
  * @swagger
- * /Course/{id}:
+ * /course/{id}:
  *  get:
  *      tags:
  *         - Course
@@ -29,6 +29,20 @@ const router = new Router;
  */
 router.get('/:id', CourseControleur.getCourse);
 
+/**
+ * @swagger
+ * /course:
+ *  get:
+ *      tags:
+ *         - Course
+ *      responses:
+ *          200:
+ *              $ref: '#/components/responses/CoursesFound'
+ *          404:
+ *              description: Courses not found
+ *          500:
+ *              description: Server error
+ */
 router.get('/', CourseControleur.getCourses);
 
 /**
@@ -43,7 +57,7 @@ router.get('/', CourseControleur.getCourses);
  *          $ref: '#/components/requestBodies/CourseToAdd'
  *      responses:
  *          201:
- *              $ref: '#/components/responses/AddCourse'
+ *              $ref: '#/components/responses/CourseAdd'
  *          400:
  *              $ref: '#/components/responses/ErrorJWT'
  *          401:
@@ -74,7 +88,7 @@ router.post('/', JWTMiddleWare.identification, AuthoMiddleware.mustBeAdminOrMana
  *          401:
  *              $ref: '#/components/responses/MissingJWT'
  *          403:
- *              $ref: '#/components/responses/mustBeManagerOrManager'
+ *              $ref: '#/components/responses/mustBeAdminOrManager'
  *          500:
  *              description: Server error
  *

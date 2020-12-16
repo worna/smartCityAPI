@@ -8,8 +8,63 @@ const CourseORM = require('../ORM/model/Course');
 const sequelize = require("../ORM/sequelize");
 const {Sequelize} = require("sequelize");
 
-
-// faire swagger
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *      Customer:
+ *          type: object
+ *          properties:
+ *              id:
+ *                  type: integer
+ *              first_name:
+ *                  type: string
+ *              last_name:
+ *                  type: string
+ *              birth_date:
+ *                  type: string
+ *                  format: datetime
+ *              gender:
+ *                  type: integer
+ *              phone_number:
+ *                  type: string
+ *              email:
+ *                  type: string
+ *              is_instructor:
+ *                  type: integer
+ *              is_manager:
+ *                  type: integer
+ *              language:
+ *                  type: string
+ *              address:
+ *                  type: string
+ *              city_name:
+ *                  type: string
+ *              zip_code:
+ *                  type: integer
+ *              country:
+ *                  type: string
+ */
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *      ArrayOfCustomers:
+ *          type: array
+ *          items:
+ *              $ref: '#/components/schemas/Customer'
+ */
+/**
+ * @swagger
+ * components:
+ *  responses:
+ *      CustomersFound:
+ *           description: send customers
+ *           content:
+ *               application/json:
+ *                   schema:
+ *                       $ref: '#/components/schemas/ArrayOfCustomers'
+ */
 module.exports.getAllCustomers = async (req, res) => {
     const allCustomers = await CustomerORM.findAll();
     const customers = [];
@@ -40,7 +95,7 @@ module.exports.getAllCustomers = async (req, res) => {
  * @swagger
  *  components:
  *      responses:
- *          AddCustomer:
+ *          CustomerAdd:
  *              description: The customer has been  added to database
  *      requestBodies:
  *          CustomerToAdd:

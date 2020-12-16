@@ -6,22 +6,15 @@ const router = new Router;
 
 /**
  * @swagger
- * /customer/{id}:
+ * /customer:
  *  get:
  *      tags:
  *         - Customer
- *      parameters:
- *          - name: id
- *            description: customer's ID
- *            in: path
- *            required: true
- *            schema:
- *              type: integer
  *      responses:
  *          200:
- *              $ref: '#/components/responses/CustomerFound'
+ *              $ref: '#/components/responses/CustomersFound'
  *          404:
- *              description: Customer not found
+ *              description: Customers not found
  *          500:
  *              description: Server error
  *
