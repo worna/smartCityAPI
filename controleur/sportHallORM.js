@@ -256,7 +256,7 @@ module.exports.updateSportHall = async (req, res) => {
 module.exports.deleteSportHall = async (req, res) => {
     const {id} = req.body;
     try{
-        await SportHallORM.destroy({where: {id}});
+        await SportHallORM.destroy({where: {id: id}});
         res.sendStatus(204);
     } catch (error){
         console.log(error);
