@@ -83,16 +83,18 @@ module.exports.getSportHalls = async (req, res) => {
             const sportHalls = [];
             for (const sportHallDB of sportHallsDB) {
                 const {id, name, manager, phone_number, email: email_sh, address, city_name, zip_code, country} = sportHallDB;
-                const managerDB = await CustomerORM.findOne({where: {email: manager}});
-                const {last_name, first_name, email} = managerDB;
+                if (manager !== null){
+                    console.log(manager);
+                    const managerDB = await CustomerORM.findOne({where: {email: manager}});
+                    const {last_name, first_name, email} = managerDB;
+                    managerObj = {last_name, first_name, email};
+                } else {
+                    managerObj = null;
+                }
                 const sportHall = {
                     id,
                     name,
-                    manager: {
-                        last_name,
-                        first_name,
-                        email
-                    },
+                    manager: managerObj,
                     phone_number,
                     email_sh,
                     address,
