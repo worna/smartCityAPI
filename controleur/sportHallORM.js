@@ -94,7 +94,7 @@ module.exports.getSportHalls = async (req, res) => {
                 const sportHall = {
                     id,
                     name,
-                    manager: "managerObj",
+                    manager: managerObj,
                     phone_number,
                     email_sh,
                     address,
