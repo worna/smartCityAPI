@@ -38,7 +38,7 @@ const {Op, Sequelize} = require("sequelize");
  * components:
  *  responses:
  *      CourseFound:
- *           description: send a course
+ *           description: Course found for this id
  *           content:
  *               application/json:
  *                   schema:
@@ -59,8 +59,13 @@ module.exports.getCourse = async (req, res) => {
                 const {name} = sportHall;
                 const room = await RoomORM.findOne({where: {id_room: id_room, id_sport_hall: id_sport_hall}});
                 const {max_capacity} = room;
-                const instructorDB = await CustomerORM.findOne({where: {email: instructor}});
-                const {last_name, first_name, email} = instructorDB;
+                if (instructor !== null){
+                    const instructorDB = await CustomerORM.findOne({where: {email: instructor}});
+                    const {last_name, first_name, email} = instructorDB;
+                    instructorObj = {last_name, first_name, email};
+                } else {
+                    instructorObj = null;
+                }
                 const course = {
                     id: id,
                     sportHall: name,
@@ -72,11 +77,7 @@ module.exports.getCourse = async (req, res) => {
                     ending_date_time: ending_date_time.toLocaleString(),
                     level: level,
                     activity: activity,
-                    instructor: {
-                        last_name,
-                        first_name,
-                        email
-                    },
+                    instructor: instructorObj
                 }
                 res.json(course);
             } else {
@@ -122,8 +123,14 @@ module.exports.getCourses = async (req, res) => {
                 const {name} = sportHall;
                 const room = await RoomORM.findOne({where: {id_room: id_room, id_sport_hall: id_sport_hall}});
                 const {max_capacity} = room;
-                const instructorDB = await CustomerORM.findOne({where: {email: instructor}});
-                const {last_name, first_name, email} = instructorDB;
+                if (instructor !== null){
+                    const instructorDB = await CustomerORM.findOne({where: {email: instructor}});
+                    const {last_name, first_name, email} = instructorDB;
+                    instructorObj = {last_name, first_name, email};
+                } else {
+                    instructorObj = null;
+                }
+
                 const course = {
                     id: id,
                     sportHall: name,
@@ -135,11 +142,7 @@ module.exports.getCourses = async (req, res) => {
                     ending_date_time: ending_date_time.toLocaleString(),
                     level: level,
                     activity: activity,
-                    instructor: {
-                        last_name,
-                        first_name,
-                        email
-                    },
+                    instructor: instructorObj
                 }
                 courses.push(course);
 
@@ -158,6 +161,12 @@ module.exports.getCourses = async (req, res) => {
  *  responses:
  *      CourseAdd:
  *          description: The course has been added
+ *      AlreadyCourse:
+ *          description: Already a course at this period
+ *      InvalidInstructor:
+ *          description: Instructor email not valid
+ *      InvalidRoomOrSportHall:
+ *          description: Room or sporthall id not valid
  *  requestBodies:
  *      CourseToAdd:
  *          content:
@@ -181,6 +190,13 @@ module.exports.getCourses = async (req, res) => {
  *                             type: string
  *                          instructor:
  *                              type: string
+ *                      required:
+ *                          - id_sport_hall
+ *                          - id_room
+ *                          - starting_date_time
+ *                          - ending_date_time
+ *                          - level
+ *                          - activity
  */
 module.exports.postCourse = async (req, res) => {
     const body = req.body;
@@ -250,10 +266,6 @@ module.exports.postCourse = async (req, res) => {
             if(currentCourseDB !== null){
                 throw new Error("Already a course at this period");
             }
-        const customerDB = await CustomerORM.findOne({where: {email: instructor}});
-        if(customerDB === null){
-            throw new Error("Instructor id not valid");
-        }
         await CourseORM.create({
             id_sport_hall,
             id_room,
@@ -323,7 +335,7 @@ module.exports.updateCourse = async (req, res) => {
         }
         const customerDB = await CustomerORM.findOne({where: {email: instructor}});
         if(customerDB === null){
-            throw new Error("Instructor id not valid");
+            throw new Error("Instructor email not valid");
         }
         await CourseORM.update({id_sport_hall, starting_date_time, ending_date_time, level, activity, room, instructor}, {where: {id}}, {transaction: t});
         });
@@ -332,8 +344,8 @@ module.exports.updateCourse = async (req, res) => {
         console.log(error);
         if (error.message === "Sport hall id not valid"){
              res.status(404).send("The sport hall id is not valid");
-        } else if (error.message === "Instructor id not valid"){
-             res.status(404).send("The instructor id is not valid");
+        } else if (error.message === "Instructor email not valid"){
+             res.status(404).send("The instructor email is not valid");
         } else {
             res.sendStatus(500);
         }

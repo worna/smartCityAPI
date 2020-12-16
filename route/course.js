@@ -21,6 +21,8 @@ const router = new Router;
  *      responses:
  *          200:
  *              $ref: '#/components/responses/CourseFound'
+ *          400:
+ *              description: The id is not a number
  *          404:
  *              description: Course not found
  *          500:
@@ -38,8 +40,6 @@ router.get('/:id', CourseControleur.getCourse);
  *      responses:
  *          200:
  *              $ref: '#/components/responses/CoursesFound'
- *          404:
- *              description: Courses not found
  *          500:
  *              description: Server error
  */
@@ -64,6 +64,8 @@ router.get('/', CourseControleur.getCourses);
  *              $ref: '#/components/responses/MissingJWT'
  *          403:
  *              $ref: '#/components/responses/mustBeAdminOrManager'
+ *          404:
+ *              description:  Wrong sport hall id, instructor email or a course already exist at this moment
  *          500:
  *              description: Server error
  *
@@ -89,6 +91,8 @@ router.post('/', JWTMiddleWare.identification, AuthoMiddleware.mustBeAdminOrMana
  *              $ref: '#/components/responses/MissingJWT'
  *          403:
  *              $ref: '#/components/responses/mustBeAdminOrManager'
+ *          404:
+ *              description: Wrong sport hall id or instructor email
  *          500:
  *              description: Server error
  *
@@ -104,7 +108,7 @@ router.patch('/', JWTMiddleWare.identification, AuthoMiddleware.mustBeAdminOrMan
  *      security:
  *          - bearerAuth: []
  *      responses:
- *          200:
+ *          204:
  *              $ref: '#/components/responses/CourseDeleted'
  *          400:
  *              $ref: '#/components/responses/ErrorJWT'

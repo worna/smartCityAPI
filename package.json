@@ -23,6 +23,6 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.6",
-    "swagger-jsdoc": "^6.0.0-rc.3"
+    "swagger-jsdoc": "^6.0.0-rc.5"
   }
 }

@@ -20,7 +20,7 @@ router.get('/customer/:email', JWTMiddleWare.identification, AuthoMiddleware.mus
  *          $ref: '#/components/requestBodies/SportHallCustomerToAdd'
  *      responses:
  *          201:
- *              $ref: '#/components/responses/AddSportHallCustomer'
+ *              $ref: '#/components/responses/AddedCustomerToSportHall'
  *          400:
  *              $ref: '#/components/responses/ErrorJWT'
  *          401:

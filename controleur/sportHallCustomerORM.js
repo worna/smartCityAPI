@@ -31,7 +31,7 @@ const {Sequelize} = require("sequelize");
  *                              type: string
  *
  *  requestBodies:
- *      AddCustomerToSportHall:
+ *      SportHallCustomerToAdd:
  *          content:
  *              application/json:
  *                  schema:

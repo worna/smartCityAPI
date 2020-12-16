@@ -46,16 +46,17 @@ module.exports.getSportHall = async (req, res) => {
             const sportHallDB = await SportHallORM.findOne({where: {id: id}});
             if(sportHallDB !== null){
                 const {id, name, manager, phone_number, email: email_sh, address, city_name, zip_code, country} = sportHallDB;
-                const managerDB = await CustomerORM.findOne({where: {email: manager}});
-                const {last_name, first_name, email} = managerDB;
+                if (manager !== null){
+                    const managerDB = await CustomerORM.findOne({where: {email: manager}});
+                    const {last_name, first_name, email} = managerDB;
+                    managerObj = {last_name, first_name, email};
+                } else {
+                    managerObj = null;
+                }
                 res.json({
                     id,
                     name,
-                    manager: {
-                        last_name,
-                        first_name,
-                        email
-                    },
+                    manager: managerObj,
                     phone_number,
                     email_sh,
                     address,
@@ -84,7 +85,6 @@ module.exports.getSportHalls = async (req, res) => {
             for (const sportHallDB of sportHallsDB) {
                 const {id, name, manager, phone_number, email: email_sh, address, city_name, zip_code, country} = sportHallDB;
                 if (manager !== null){
-                    console.log(manager);
                     const managerDB = await CustomerORM.findOne({where: {email: manager}});
                     const {last_name, first_name, email} = managerDB;
                     managerObj = {last_name, first_name, email};
