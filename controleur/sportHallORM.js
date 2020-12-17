@@ -17,14 +17,15 @@ const {Sequelize} = require("sequelize");
  *              name:
  *                  type: string
  *              manager:
- *                  type: integer
- *              phonenumber:
+ *                  description: manager email
  *                  type: string
- *              email:
+ *              phone_number:
  *                  type: string
- *              cityname:
+ *              email_sh:
  *                  type: string
- *              zipcode :
+ *              city_name:
+ *                  type: string
+ *              zip_code :
  *                  type: integer
  *              country:
  *                  type: string
@@ -41,6 +42,8 @@ const {Sequelize} = require("sequelize");
  *               application/json:
  *                   schema:
  *                       $ref: '#/components/schemas/SportHall'
+ *      SportHallNotFound:
+ *          description: Sport hall with this id is not found
  */
 module.exports.getSportHall = async (req, res) => {
     const idTexte = req.params.id;
@@ -101,6 +104,8 @@ module.exports.getSportHall = async (req, res) => {
  *               application/json:
  *                   schema:
  *                       $ref: '#/components/schemas/ArrayOfSportHalls'
+ *      NoSportHallFound:
+ *          description: No sport hall found
  */
 module.exports.getSportHalls = async (req, res) => {
 
@@ -132,7 +137,7 @@ module.exports.getSportHalls = async (req, res) => {
             }
             res.json(sportHalls);
         } else {
-            console.log("No sport hall");
+            console.log("No sport hall found");
             res.sendStatus(404);
         }
     } catch (error){
@@ -147,6 +152,8 @@ module.exports.getSportHalls = async (req, res) => {
  *  responses:
  *      SportHallAdd:
  *          description: The sport hall has been added
+ *      ManagerNotFound:
+ *          description: No manager found with this email
  *  requestBodies:
  *      SportHallToAdd:
  *          content:
@@ -155,29 +162,37 @@ module.exports.getSportHalls = async (req, res) => {
  *                      type: object
  *                      properties:
  *                          name:
+ *                              description: Sport hall name
  *                              type: string
  *                          manager:
- *                              type: integer
- *                          phonenumber:
+ *                              description: manager email
+ *                              type: string
+ *                          phone_number:
+ *                              description: Sport hall phone number
  *                              type: string
  *                          email:
- *                              type: string
- *                          cityname:
- *                              type: string
- *                          zipcode :
- *                              type: integer
- *                          country:
+ *                              description: Sport hall email
  *                              type: string
  *                          address:
+ *                              description: Sport hall address (street and number)
+ *                              type: string
+ *                          city_name:
+ *                              description: Sport hall city name
+ *                              type: string
+ *                          zip_code :
+ *                              description: Sport hall zip code
+ *                              type: integer
+ *                          country:
+ *                              description: Sport hall country
  *                              type: string
  *                      required:
  *                          - name
- *                          - phonenumber
+ *                          - phone_number
  *                          - email
- *                          - cityname
- *                          - zipcode
- *                          - country
  *                          - address
+ *                          - city_name
+ *                          - zip_code
+ *                          - country
  */
 module.exports.postSportHall = async (req, res) => {
     const body = req.body;
@@ -189,7 +204,7 @@ module.exports.postSportHall = async (req, res) => {
         if(manager !== undefined){
             const managerDB = await CustomerORM.findOne({where: {email: manager}});
             if (managerDB === null){
-                    throw new Error("Manager email not valid");
+                    throw new Error("Manager not found");
                 } else {
                     const {is_manager} = managerDB;
                     if(is_manager != 1) {
@@ -223,8 +238,8 @@ module.exports.postSportHall = async (req, res) => {
         res.sendStatus(201);
     } catch (error){
         console.log(error);
-        if(error.message === "Manager id not valid"){
-            res.status(404).send("The manager id is not valid");
+        if(error.message === "Manager not found"){
+            res.status(404).send("The manager is not found");
         }else{
             res.sendStatus(500);
         }
@@ -281,7 +296,7 @@ module.exports.updateSportHall = async (req, res) => {
         if(manager !== undefined){
             const managerDB = await CustomerORM.findOne({where: {email: manager}});
             if (managerDB === null){
-                throw new Error("Manager email not valid");
+                throw new Error("Manager not found");
             } else {
                 const {is_manager} = managerDB;
                 if(is_manager != 1) {
@@ -304,8 +319,8 @@ module.exports.updateSportHall = async (req, res) => {
         res.sendStatus(204);
     } catch (error){
         console.log(error);
-        if(error.message === "Manager id not valid"){
-            res.status(404).send("The manager id is not valid");
+        if(error.message === "Manager not found"){
+            res.status(404).send("The manager is not found");
         }else{
             res.sendStatus(500);
         }

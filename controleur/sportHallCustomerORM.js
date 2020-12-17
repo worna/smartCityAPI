@@ -63,11 +63,11 @@ module.exports.postSportHallCustomer = async (req, res) => {
         }, async (t) => {
             const sportHallDB = await SportHallORM.findOne({where: {id: sportHall}});
             if(sportHallDB === null){
-                throw new Error("Sport hall id not valid");
+                throw new Error("Sport not found");
             }
             const customerDB = await CustomerORM.findOne({where: {email: customer}});
             if(customerDB === null){
-                throw new Error("Customer id not valid");
+                throw new Error("Customer not found");
             }
             await SportHallCustomerORM.create({
                 id_sport_hall: sportHall,
@@ -77,10 +77,10 @@ module.exports.postSportHallCustomer = async (req, res) => {
         res.sendStatus(201);
     } catch (error){
         console.log(error);
-        if(error.message === "Sport hall id not valid"){
-            res.status(404).send( "The sport hall id is not valid");
-        }else if(error.message === "Customer id not valid"){
-            res.status(404).send("The customer id is not valid");
+        if(error.message === "Sport hall not found"){
+            res.status(404).send( "The sport hall with this id is not found");
+        }else if(error.message === "Customer not found"){
+            res.status(404).send("The customer with this email is not found");
         } else{
             res.sendStatus(500);
         }

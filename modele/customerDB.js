@@ -1,9 +1,9 @@
 const {getHash} = require("../utils/utils");
 
-module.exports.createCustomer = async (client, firstName, lastName, birthDate, gender, phoneNumber, email, password,  isInstructor, language, address, city_name, zip_code, country) => {
+module.exports.createCustomer = async (client, firstName, lastName, birthDate, gender, phoneNumber, email, password, language, address, city_name, zip_code, country) => {
     return await client.query(`
         INSERT INTO customer(first_name, last_name, birth_date, gender, phone_number, email, password, inscription_date, is_manager, is_instructor, language , address, city_name, zip_code, country)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, current_timestamp, 0, $8, $9, $10, $11, $12, $13)`, [firstName, lastName, birthDate, gender, phoneNumber, email, await getHash(password), isInstructor, language, address, city_name, zip_code, country]
+        VALUES ($1, $2, $3, $4, $5, $6, $7, current_timestamp, 0, 0, $8, $9, $10, $11, $12)`, [firstName, lastName, birthDate, gender, phoneNumber, email, await getHash(password), language, address, city_name, zip_code, country]
     );
 }
 
@@ -20,7 +20,7 @@ module.exports.getCustomer = async (client, email) => {
         SELECT * FROM customer WHERE email = $1 AND is_manager = 0 LIMIT 1;`, [email]);
 }
 
-module.exports.updateCustomer = async (client, email, firstName, lastName, birthDate, gender, phoneNumber, newEmail, password, inscriptionDate, isManager, isInstructor, language, address, city_name, zip_code, country) => {
+module.exports.updateCustomer = async (client, email, firstName, lastName, birthDate, gender, phoneNumber, newEmail, password, language, address, city_name, zip_code, country) => {
     const params = [];
     const querySet = [];
     let query = "UPDATE customer SET ";
@@ -51,18 +51,6 @@ module.exports.updateCustomer = async (client, email, firstName, lastName, birth
     if(password !== undefined){
         params.push(await getHash(password));
         querySet.push(` password = $${params.length} `);
-    }
-    if(inscriptionDate !== undefined){
-        params.push(inscriptionDate);
-        querySet.push(` inscription_date = $${params.length} `);
-    }
-    if(isManager !== undefined){
-        params.push(isManager);
-        querySet.push(` is_manager = $${params.length} `);
-    }
-    if(isInstructor !== undefined){
-        params.push(isInstructor);
-        querySet.push(` is_instructor = $${params.length} `);
     }
     if(language !== undefined){
         params.push(language);

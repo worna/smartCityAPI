@@ -103,7 +103,7 @@ module.exports.getAllCustomers = async (req, res) => {
  *          CustomerAdd:
  *              description: The customer has been  added to database
  *          IncorrectCustomerBody:
- *              description: At least one parameter in body is wrong or empty
+ *              description: At least one parameter in body is wrong or no parameter
  *      requestBodies:
  *          CustomerToAdd:
  *              content:
@@ -126,14 +126,15 @@ module.exports.getAllCustomers = async (req, res) => {
  *                              password:
  *                                  type: string
  *                                  format: password
- *                              inscriptiondate:
- *                                  type: string
- *                                  format: date
- *                              ismanager:
- *                                  type: integer
- *                              isinstructor:
- *                                  type: integer
  *                              language:
+ *                                  type: string
+ *                              address:
+ *                                  type: string
+ *                              city_name:
+ *                                  type: string
+ *                              zip_code:
+ *                                  type: integer
+ *                              country:
  *                                  type: string
  *                          required:
  *                              - firstname
@@ -143,10 +144,11 @@ module.exports.getAllCustomers = async (req, res) => {
  *                              - phonenumber
  *                              - email
  *                              - password
- *                              - inscriptiondate
- *                              - ismanager
- *                              - isinstructor
  *                              - language
+ *                              - address
+ *                              - city_name
+ *                              - zip_code
+ *                              - country
  */
 module.exports.postCustomer = async (req, res) => {
     const lastname = req.body.last_name;
@@ -156,14 +158,13 @@ module.exports.postCustomer = async (req, res) => {
     const phonenumber= req.body.phone_number;
     const email = req.body.email;
     const password = req.body.password;
-    const isinstructor = req.body.is_instructor;
     const language = req.body.language;
     const address = req.body.address;
     const city_name = req.body.city_name;
     const zip_code = req.body.zip_code;
     const country = req.body.country;
 
-    if(lastname === undefined || firstname === undefined || birthdate === undefined || gender === undefined || phonenumber === undefined || email === undefined || password === undefined || isinstructor === undefined || language === undefined || address === undefined || city_name === undefined || zip_code === undefined || country === undefined){
+    if(lastname === undefined || firstname === undefined || birthdate === undefined || gender === undefined || phonenumber === undefined || email === undefined || password === undefined || language === undefined || address === undefined || city_name === undefined || zip_code === undefined || country === undefined){
         console.log("Parameters are wrong or empty");
         res.sendStatus(400);
     } else {
@@ -174,16 +175,14 @@ module.exports.postCustomer = async (req, res) => {
             }, async (t) => {
                 const cityDB = await CityORM.findOne({where: {city_name: city_name, zip_code: zip_code, country: country}});
                 if(cityDB === null){
-                    city = await CityORM.create({
+                    await CityORM.create({
                         city_name,
                         zip_code,
                         country
                     }, {transaction: t});
-                } else {
-                    city = cityDB;
                 }
             });
-            await CustomerDB.createCustomer(client, lastname, firstname, birthdate, gender, phonenumber, email, password, isinstructor, language, address, city_name, zip_code, country);
+            await CustomerDB.createCustomer(client, lastname, firstname, birthdate, gender, phonenumber, email, password, language, address, city_name, zip_code, country);
             res.sendStatus(201);
         } catch (error) {
             console.log(error);
@@ -227,11 +226,15 @@ module.exports.postCustomer = async (req, res) => {
  *                              inscriptiondate:
  *                                  type: string
  *                                  format: date
- *                              ismanager:
- *                                  type: integer
- *                              isinstructor:
- *                                  type: integer
  *                              language:
+ *                                  type: string
+ *                              address:
+ *                                  type: string
+ *                              city_name:
+ *                                  type: string
+ *                              zip_code:
+ *                                  type: integer
+ *                              country:
  *                                  type: string
  *                          required:
  *                              - email
@@ -252,9 +255,6 @@ module.exports.updateCustomer = async (req, res) => {
         toUpdate.phonenumber !== undefined ||
         toUpdate.newemail !== undefined ||
         toUpdate.password !== undefined ||
-        toUpdate.inscriptiondate !== undefined ||
-        toUpdate.ismanager !== undefined ||
-        toUpdate.isinstructor !== undefined ||
         toUpdate.language !== undefined ||
         toUpdate.address !== undefined ||
         toUpdate.city_name !== undefined ||
@@ -272,9 +272,6 @@ module.exports.updateCustomer = async (req, res) => {
         newData.phonenumber = toUpdate.phonenumber;
         newData.newemail = toUpdate.newemail;
         newData.password = toUpdate.password;
-        newData.inscriptiondate = toUpdate.inscriptiondate;
-        newData.ismanager = toUpdate.ismanager;
-        newData.isinstructor = toUpdate.isinstructor;
         newData.language = toUpdate.language;
         newData.address = toUpdate.address;
         newData.city_name = toUpdate.city_name;
@@ -293,9 +290,6 @@ module.exports.updateCustomer = async (req, res) => {
                 newData.phonenumber,
                 newData.newemail,
                 newData.password,
-                newData.inscriptiondate,
-                newData.ismanager,
-                newData.isinstructor,
                 newData.language,
                 newData.address,
                 newData.city_name,

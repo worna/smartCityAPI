@@ -8,7 +8,7 @@ const userController = require('../controleur/userDB');
  *  post:
  *      tags:
  *          - User
- *      description: send a JWT token for the identification
+ *      description: Send back a JWT token for the identification
  *      requestBody:
  *          description: login for connexion
  *          content:
@@ -16,12 +16,18 @@ const userController = require('../controleur/userDB');
  *                  schema:
  *                      $ref: '#/components/schemas/Login'
  *      responses:
- *          200:
+ *          201:
  *            description: a JWT token
  *            content:
  *                text/plain:
  *                    schema:
  *                        type: string
+ *          400:
+ *              description: Email and/or password are empty
+ *          404:
+ *              description: User not found
+ *          500:
+ *              description: Server error
  *
  */
 router.post('/login', userController.login);

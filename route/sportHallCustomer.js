@@ -83,6 +83,8 @@ router.get('/customer/:email', JWTMiddleWare.identification, AuthoMiddleware.mus
  *              $ref: '#/components/responses/MissingJWT'
  *          403:
  *              $ref: '#/components/responses/isMyAccountOrAdmin'
+ *          404:
+ *              description: The sport hall or customer is not found
  *          500:
  *              description: Server error
  *
