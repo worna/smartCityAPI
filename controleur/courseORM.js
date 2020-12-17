@@ -45,7 +45,7 @@ const {Op, Sequelize} = require("sequelize");
  *                       $ref: '#/components/schemas/Course'
  */
 module.exports.getCourse = async (req, res) => {
-    const idTexte = req.params.id;
+    const email = req.params.id;
     const id = parseInt(idTexte);
     try{
         if(isNaN(id)){

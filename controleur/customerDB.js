@@ -48,6 +48,53 @@ const {Sequelize} = require("sequelize");
 /**
  * @swagger
  * components:
+ *  responses:
+ *      CustomerFound:
+ *           description: send a customer
+ *           content:
+ *               application/json:
+ *                   schema:
+ *                       $ref: '#/components/schemas/Customer'
+ */
+module.exports.getCustomer = async (req, res) => {
+    const idTexte = req.params.id;
+    const id = parseInt(idTexte);
+    //const email = req.params.email;
+    try{
+        const customerDB = await CustomerORM.findOne({where: {id: id}});
+        if(customerDB !== null){
+            const {id, first_name, last_name, birth_date, gender, phone_number, email, inscription_date, is_manager, is_instructor, language, address, city_name, zip_code, country} = customerDB;
+            const customer = {
+                id: id,
+                first_name: first_name,
+                last_name: last_name,
+                birth_date: birth_date,
+                gender: gender,
+                phone_number: phone_number,
+                email: email,
+                inscription_date: inscription_date,
+                is_manager: is_manager,
+                is_instructor: is_instructor,
+                language: language,
+                address: address,
+                city_name: city_name,
+                zip_code: zip_code,
+                country: country
+            }
+            res.json(customer);
+        } else {
+            console.log("Impossible to find the customer");
+            res.sendStatus(404);
+        }
+    } catch (error){
+        console.log(error);
+        res.sendStatus(500);
+    }
+}
+
+/**
+ * @swagger
+ * components:
  *  schemas:
  *      ArrayOfCustomers:
  *          type: array
@@ -59,11 +106,13 @@ const {Sequelize} = require("sequelize");
  * components:
  *  responses:
  *      CustomersFound:
- *           description: send an array of all customers
+ *           description: send back array of all customers
  *           content:
  *               application/json:
  *                   schema:
  *                       $ref: '#/components/schemas/ArrayOfCustomers'
+ *      NoCustomerFound:
+ *          description: No customer found
  */
 module.exports.getAllCustomers = async (req, res) => {
     try{

@@ -157,9 +157,9 @@ module.exports.getCustomersInSportHall = async (req, res) => {
  *          description: No sport hall found for this customer
  */
 module.exports.getSportHallsOfCustomer = async (req, res) => {
-    const email = req.params.email;
+    const emailCustomer = req.params.email;
     try {
-        const customerDB = await CustomerORM.findOne({where: {email: email}});
+        const customerDB = await CustomerORM.findOne({where: {email: emailCustomer}});
         if (customerDB === null) {
             throw new Error("Customer email not valid");
         }

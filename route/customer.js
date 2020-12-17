@@ -6,6 +6,36 @@ const router = new Router;
 
 /**
  * @swagger
+ * /customer/{id}:
+ *  get:
+ *      tags:
+ *         - Customer
+ *      parameters:
+ *          - name: id
+ *            description: customer's ID
+ *            in: path
+ *            required: true
+ *            schema:
+ *              type: integer
+ *      responses:
+ *          200:
+ *              $ref: '#/components/responses/CustomerFound'
+ *          400:
+ *              $ref: '#/components/responses/ErrorJWT'
+ *          401:
+ *              $ref: '#/components/responses/MissingJWT'
+ *          403:
+ *              $ref: '#/components/responses/isMyAccountOrAdmin'
+ *          404:
+ *              description: Impossible to find the customer
+ *          500:
+ *              description: Server error
+ *
+ */
+router.get('/:id', JWTMiddleWare.identification, AuthoMiddleware.isMyAccountOrAdmin, CustomerControleur.getCustomer);
+
+/**
+ * @swagger
  * /customer:
  *  get:
  *      tags:
