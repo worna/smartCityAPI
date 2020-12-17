@@ -1,6 +1,10 @@
 const SportHallORM = require('../ORM/model/SportHall');
+const SportHallCustomerORM = require('../ORM/model/SportHallCustomer');
 const CustomerORM = require ('../ORM/model/Customer');
 const CityORM = require('../ORM/model/City');
+const CourseORM = require('../ORM/model/Course');
+const RoomORM = require('../ORM/model/Room');
+const CustomerCourse = require('../ORM/model/CustomerCourse');
 const sequelize = require("../ORM/sequelize");
 const {Sequelize} = require("sequelize");
 
@@ -337,7 +341,19 @@ module.exports.updateSportHall = async (req, res) => {
 module.exports.deleteSportHall = async (req, res) => {
     const {id} = req.body;
     try{
-        await SportHallORM.destroy({where: {id: id}});
+        sequelize.transaction( {
+            deferrable:  Sequelize.Deferrable.SET_DEFERRED
+        }, async (t) => {
+            await SportHallCustomerORM.destroy({where: {id_sport_hall: id}}, {transaction: t});
+            const coursesDB = await CourseORM.findAll({where: {id_sport_hall: id}}, {transaction: t});
+            for (const courseDB of coursesDB) {
+                const {id: id_course} = courseDB;
+                await CustomerCourse.destroy({where: {id_course: id_course}}, {transaction: t});
+            }
+            await CourseORM.destroy({where: {id_sport_hall: id}}, {transaction: t});
+            await RoomORM.destroy({where: {id_sport_hall: id}}, {transaction: t});
+            await SportHallORM.destroy({where: {id: id}}, {transaction: t});
+        });
         res.sendStatus(204);
     } catch (error){
         console.log(error);
