@@ -64,6 +64,7 @@ module.exports.getCustomersInCourse = async (req, res) => {
         }
     }
 }
+
  /**
  * @swagger
  * components:

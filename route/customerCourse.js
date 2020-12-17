@@ -22,6 +22,10 @@ const router = new Router;
  *              $ref: '#/components/responses/CustomersOfCourseFound'
  *          400:
  *              $ref: '#/components/responses/InvalidCourseId'
+ *          401:
+ *              $ref: '#/components/responses/MissingJWT'
+ *          403:
+ *              $ref: '#/components/responses/mustBeAdminOrManager'
  *          404:
  *              description: Course not found or don't have customer
  *          500:
@@ -29,6 +33,7 @@ const router = new Router;
  *
  */
 router.get('/course/:id', JWTMiddleWare.identification, AuthoMiddleware.mustBeAdminOrManager, CustomerCourseControleur.getCustomersInCourse);
+
 /**
  * @swagger
  * /customerCourse/customer/{email}:
@@ -45,6 +50,12 @@ router.get('/course/:id', JWTMiddleWare.identification, AuthoMiddleware.mustBeAd
  *      responses:
  *          200:
  *              $ref: '#/components/responses/CoursesOfCustomerFound'
+ *          400:
+ *              $ref: '#/components/responses/ErrorJWT'
+ *          401:
+ *              $ref: '#/components/responses/MissingJWT'
+ *          403:
+ *              $ref: '#/components/responses/isMyAccountOrAdmin'
  *          404:
  *              description: The customer is not found or don't have course
  *          500:
@@ -100,4 +111,5 @@ router.post('/', JWTMiddleWare.identification, AuthoMiddleware.isMyAccount, Cust
  *
  */
 router.delete('/', JWTMiddleWare.identification, AuthoMiddleware.isMyAccountOrAdmin, CustomerCourseControleur.deleteCustomerCourse);
+
 module.exports = router;

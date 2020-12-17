@@ -21,6 +21,8 @@ const router = new Router;
  *      responses:
  *          200:
  *              $ref: '#/components/responses/SportHallFound'
+ *          400:
+ *              description: The id is not a number
  *          404:
  *              description: Sport hall not found
  *          500:
@@ -29,6 +31,18 @@ const router = new Router;
  */
 router.get('/:id', SportHallControleur.getSportHall);
 
+/**
+ * @swagger
+ * /sportHall:
+ *  get:
+ *      tags:
+ *         - SportHall
+ *      responses:
+ *          200:
+ *              $ref: '#/components/responses/SportHallsFound'
+ *          500:
+ *              description: Server error
+ */
 router.get('/', SportHallControleur.getSportHalls);
 
 /**
@@ -43,7 +57,7 @@ router.get('/', SportHallControleur.getSportHalls);
  *          $ref: '#/components/requestBodies/SportHallToAdd'
  *      responses:
  *          201:
- *              $ref: '#/components/responses/AddSportHall'
+ *              $ref: '#/components/responses/SportHallAdd'
  *          400:
  *              $ref: '#/components/responses/ErrorJWT'
  *          401:
@@ -74,7 +88,7 @@ router.post('/', JWTMiddleWare.identification, AuthoMiddleware.mustBeAdmin, Spor
  *          401:
  *              $ref: '#/components/responses/MissingJWT'
  *          403:
- *              $ref: '#/components/responses/mustBeManager'
+ *              $ref: '#/components/responses/mustBeAdminOrManager'
  *          500:
  *              description: Server error
  *
@@ -97,7 +111,7 @@ router.patch('/', JWTMiddleWare.identification, AuthoMiddleware.mustBeAdminOrMan
  *          401:
  *              $ref: '#/components/responses/MissingJWT'
  *          403:
- *              $ref: '#/components/responses/mustBeManager'
+ *              $ref: '#/components/responses/mustBeAdmin'
  *          500:
  *              description: Server error
  *

@@ -87,7 +87,23 @@ module.exports.postSportHallCustomer = async (req, res) => {
     }
 }
 
-// faire swagger
+/**
+ * @swagger
+ * components:
+ *   responses:
+ *      CustomersOfSportHallFound:
+ *          description: send back array of customer for a sport hall
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                       $ref: '#/components/schemas/ArrayOfCustomers'
+ *      InvalidSportHallId:
+ *          description: The sport hall id should be a number
+ *      SportHallNotFound:
+ *          description: The sport hall doesn't exist
+ *      NoCustomerFound:
+ *          description: The sport hall doesn't have customer
+ */
 module.exports.getCustomersInSportHall = async (req, res) => {
     const idTexte = req.params.id;
     const id = parseInt(idTexte);
@@ -125,7 +141,21 @@ module.exports.getCustomersInSportHall = async (req, res) => {
     }
 }
 
-// faire swagger
+/**
+ * @swagger
+ * components:
+ *   responses:
+ *      SportHallsOfCustomerFound:
+ *          description: send back array of sport halls for a customer
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                       $ref: '#/components/schemas/ArrayOfSportHalls'
+ *      CustomerNotFound:
+ *          description: The customer doesn't exist
+ *      NoSportHallFoundForCustomer:
+ *          description: No sport hall found for this customer
+ */
 module.exports.getSportHallsOfCustomer = async (req, res) => {
     const email = req.params.email;
     try {

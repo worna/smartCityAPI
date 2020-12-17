@@ -16,12 +16,19 @@ const {Sequelize} = require("sequelize");
  *                  type: integer
  *              name:
  *                  type: string
- *                  description: sport hall's name
  *              manager:
  *                  type: integer
  *              phonenumber:
  *                  type: string
  *              email:
+ *                  type: string
+ *              cityname:
+ *                  type: string
+ *              zipcode :
+ *                  type: integer
+ *              country:
+ *                  type: string
+ *              address:
  *                  type: string
  */
 /**
@@ -75,7 +82,26 @@ module.exports.getSportHall = async (req, res) => {
     }
 }
 
-// faire swagger
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *      ArrayOfSportHalls:
+ *          type: array
+ *          items:
+ *              $ref: '#/components/schemas/SportHall'
+ */
+/**
+ * @swagger
+ * components:
+ *  responses:
+ *      SportHallsFound:
+ *           description: send back array of all sport halls
+ *           content:
+ *               application/json:
+ *                   schema:
+ *                       $ref: '#/components/schemas/ArrayOfSportHalls'
+ */
 module.exports.getSportHalls = async (req, res) => {
 
     try{
@@ -119,7 +145,7 @@ module.exports.getSportHalls = async (req, res) => {
  *@swagger
  *components:
  *  responses:
- *      AddSportHall:
+ *      SportHallAdd:
  *          description: The sport hall has been added
  *  requestBodies:
  *      SportHallToAdd:
@@ -130,13 +156,28 @@ module.exports.getSportHalls = async (req, res) => {
  *                      properties:
  *                          name:
  *                              type: string
- *                              description: sportHall's name
  *                          manager:
  *                              type: integer
  *                          phonenumber:
  *                              type: string
  *                          email:
  *                              type: string
+ *                          cityname:
+ *                              type: string
+ *                          zipcode :
+ *                              type: integer
+ *                          country:
+ *                              type: string
+ *                          address:
+ *                              type: string
+ *                      required:
+ *                          - name
+ *                          - phonenumber
+ *                          - email
+ *                          - cityname
+ *                          - zipcode
+ *                          - country
+ *                          - address
  */
 module.exports.postSportHall = async (req, res) => {
     const body = req.body;
@@ -207,13 +248,29 @@ module.exports.postSportHall = async (req, res) => {
  *                              type: integer
  *                          name:
  *                              type: string
- *                              description: sportHall's name
  *                          manager:
  *                              type: integer
  *                          phonenumber:
  *                              type: string
  *                          email:
  *                              type: string
+ *                          cityname:
+ *                              type: string
+ *                          zipcode :
+ *                              type: integer
+ *                          country:
+ *                              type: string
+ *                          address:
+ *                              type: string
+ *                      required:
+ *                          - id
+ *                          - name
+ *                          - phonenumber
+ *                          - email
+ *                          - cityname
+ *                          - zipcode
+ *                          - country
+ *                          - address
  */
 module.exports.updateSportHall = async (req, res) => {
     const {id, name, manager, phone_number, email, address, city_name, zip_code, country} = req.body;
@@ -272,4 +329,3 @@ module.exports.deleteSportHall = async (req, res) => {
         res.status(500).send(error);
     }
 }
-

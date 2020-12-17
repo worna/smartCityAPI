@@ -4,8 +4,64 @@ const AuthoMiddleware = require("../middleware/Authorization");
 const Router = require("express-promise-router");
 const router = new Router;
 
-
+/**
+ * @swagger
+ * /sportHallCustomer/sportHall/{id}:
+ *  get:
+ *      tags:
+ *         - SportHallCustomer
+ *      parameters:
+ *          - name: id
+ *            description: sport hall's ID
+ *            in: path
+ *            required: true
+ *            schema:
+ *              type: integer
+ *      responses:
+ *          200:
+ *              $ref: '#/components/responses/CustomersOfSportHallFound'
+ *          400:
+ *              $ref: '#/components/responses/ErrorJWT'
+ *          401:
+ *              $ref: '#/components/responses/MissingJWT'
+ *          403:
+ *              $ref: '#/components/responses/mustBeAdminOrManager'
+ *          404:
+ *              description: Sport hall not found or don't have customer
+ *          500:
+ *              description: Server error
+ *
+ */
 router.get('/sportHall/:id', JWTMiddleWare.identification, AuthoMiddleware.mustBeAdminOrManager, SportHallCustomerControleur.getCustomersInSportHall);
+
+/**
+ * @swagger
+ * /sportHallCustomer/customer/{email}:
+ *  get:
+ *      tags:
+ *         - SportHallCustomer
+ *      parameters:
+ *          - name: email
+ *            description: customer's email
+ *            in: path
+ *            required: true
+ *            schema:
+ *              type: string
+ *      responses:
+ *          200:
+ *              $ref: '#/components/responses/SportHallsOfCustomerFound'
+ *          400:
+ *              $ref: '#/components/responses/ErrorJWT'
+ *          401:
+ *              $ref: '#/components/responses/MissingJWT'
+ *          403:
+ *              $ref: '#/components/responses/mustBeAdmin'
+ *          404:
+ *              description: The customer is not found or don't have sport hall
+ *          500:
+ *              description: Server error
+ *
+ */
 router.get('/customer/:email', JWTMiddleWare.identification, AuthoMiddleware.mustBeAdmin, SportHallCustomerControleur.getSportHallsOfCustomer);
 
 /**

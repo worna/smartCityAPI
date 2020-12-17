@@ -3,6 +3,7 @@ const {getManager} = require('./managerDB');
 const {getAdmin} = require('./adminDB');
 const {compareHash} = require('../utils/utils');
 
+
 module.exports.getUser = async (client, email, password) => {
     const promises = [];
     const promiseCustomer = getCustomer(client, email);
