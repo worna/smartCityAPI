@@ -10,9 +10,17 @@ const router = new Router;
  *  get:
  *      tags:
  *         - Customer
+ *      security:
+ *          - bearerAuth: []
  *      responses:
  *          200:
  *              $ref: '#/components/responses/CustomersFound'
+ *          400:
+ *              $ref: '#/components/responses/ErrorJWT'
+ *          401:
+ *              $ref: '#/components/responses/MissingJWT'
+ *          403:
+ *              $ref: '#/components/responses/mustBeAdmin'
  *          404:
  *              description: Customers not found
  *          500:
@@ -32,6 +40,8 @@ router.get('/', JWTMiddleWare.identification, AuthoMiddleware.mustBeAdmin, Custo
  *      responses:
  *          201:
  *              $ref: '#/components/responses/CustomerAdd'
+ *          400:
+ *              $ref: '#/components/responses/IncorrectCustomerBody'
  *          500:
  *              description: Server error
  *
@@ -57,12 +67,35 @@ router.post('/', CustomerControleur.postCustomer);
  *              $ref: '#/components/responses/MissingJWT'
  *          403:
  *              $ref: '#/components/responses/isMyAccount'
+ *          404:
+ *              description: Customer not found
  *          500:
  *              description: Server error
  *
  */
 router.patch('/', JWTMiddleWare.identification, AuthoMiddleware.isMyAccount, CustomerControleur.updateCustomer);
 
+/**
+ * @swagger
+ * /customer:
+ *  delete:
+ *      tags:
+ *          - Customer
+ *      security:
+ *          - bearerAuth: []
+ *      responses:
+ *          204:
+ *              $ref: '#/components/responses/CustomerDeleted'
+ *          400:
+ *              $ref: '#/components/responses/ErrorJWT'
+ *          401:
+ *              $ref: '#/components/responses/MissingJWT'
+ *          403:
+ *              $ref: '#/components/responses/isMyAccountOrAdmin'
+ *          500:
+ *              description: Server error
+ *
+ */
 router.delete('/', JWTMiddleWare.identification, AuthoMiddleware.isMyAccountOrAdmin, CustomerControleur.deleteCustomer);
 
 module.exports = router;

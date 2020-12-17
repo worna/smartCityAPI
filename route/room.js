@@ -6,20 +6,22 @@ const router = new Router;
 
 /**
  * @swagger
- * /room/{id}:
+ * /room/{sportHallId-roomId}:
  *  get:
  *      tags:
  *         - Room
  *      parameters:
- *          - name: id
- *            description: room's ID
+ *          - name: sportHallId-roomId
+ *            description: The sport hall id than the room id
  *            in: path
  *            required: true
  *            schema:
- *              type: integer
+ *              type: string
  *      responses:
  *          200:
  *              $ref: '#/components/responses/RoomFound'
+ *          400:
+ *              description: Room id or sport hall id is not a number
  *          404:
  *              description: Room not found
  *          500:
@@ -47,6 +49,8 @@ router.get('/:id', RoomControleur.getRoom);
  *              $ref: '#/components/responses/MissingJWT'
  *          403:
  *              $ref: '#/components/responses/mustBeAdminOrManager'
+ *          404:
+ *              $ref: '#/components/responses/SportHallNotFound'
  *          500:
  *              description: Server error
  *
@@ -72,6 +76,8 @@ router.post('/', JWTMiddleWare.identification, AuthoMiddleware.mustBeAdminOrMana
  *              $ref: '#/components/responses/MissingJWT'
  *          403:
  *              $ref: '#/components/responses/mustBeAdminOrManager'
+ *          404:
+ *              $ref: '#/components/responses/SportHallNotFound'
  *          500:
  *              description: Server error
  *

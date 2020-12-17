@@ -105,7 +105,7 @@ module.exports.getCourse = async (req, res) => {
  * components:
  *  responses:
  *      CoursesFound:
- *           description: send courses
+ *           description: send back array of all courses
  *           content:
  *               application/json:
  *                   schema:
@@ -166,7 +166,7 @@ module.exports.getCourses = async (req, res) => {
  *      InvalidInstructor:
  *          description: Instructor email not valid
  *      InvalidRoomOrSportHall:
- *          description: Room or sporthall id not valid
+ *          description: Room or sport hall id not valid
  *  requestBodies:
  *      CourseToAdd:
  *          content:
@@ -205,13 +205,15 @@ module.exports.postCourse = async (req, res) => {
         await sequelize.transaction( {
             deferrable:  Sequelize.Deferrable.SET_DEFERRED
         }, async (t) => {
-        const instructorDB = await CustomerORM.findOne({where: {email: instructor}});
-        if (instructorDB === null){
-            throw new Error("Instructor email not valid");
-        } else {
-            const {is_instructor} = instructorDB;
-            if(is_instructor != 1) {
-                CustomerORM.update({is_instructor : 1},{where:{email: instructor}});
+        if(instructor !== undefined){
+            const instructorDB = await CustomerORM.findOne({where: {email: instructor}});
+            if (instructorDB !== null) {
+                throw new Error("Instructor email not valid");
+            } else {
+                const {is_instructor} = instructorDB;
+                if (is_instructor != 1) {
+                    await CustomerORM.update({is_instructor: 1}, {where: {email: instructor}});
+                }
             }
         }
         const roomDB = await RoomORM.findOne({where: {id_room: id_room, id_sport_hall: id_sport_hall}});
@@ -322,6 +324,14 @@ module.exports.postCourse = async (req, res) => {
  *                             type: string
  *                          instructor:
  *                              type: string
+ *                      required:
+ *                          - id
+ *                          - id_sport_hall
+ *                          - id_room
+ *                          - starting_date_time
+ *                          - ending_date_time
+ *                          - level
+ *                          - activity
  */
 module.exports.updateCourse = async (req, res) => {
     const {id, id_sport_hall, starting_date_time, ending_date_time, level, activity, room, instructor} = req.body;
@@ -333,9 +343,16 @@ module.exports.updateCourse = async (req, res) => {
         if(sportHallDB === null){
             throw new Error("Sport hall id not valid");
         }
-        const customerDB = await CustomerORM.findOne({where: {email: instructor}});
-        if(customerDB === null){
-            throw new Error("Instructor email not valid");
+        if(instructor !== undefined){
+            const instructorDB = await CustomerORM.findOne({where: {email: instructor}});
+            if (instructorDB !== null) {
+                throw new Error("Instructor email not valid");
+            } else {
+                const {is_instructor} = instructorDB;
+                if (is_instructor != 1) {
+                    await CustomerORM.update({is_instructor: 1}, {where: {email: instructor}});
+                }
+            }
         }
         await CourseORM.update({id_sport_hall, starting_date_time, ending_date_time, level, activity, room, instructor}, {where: {id}}, {transaction: t});
         });

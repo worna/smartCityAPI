@@ -17,13 +17,16 @@ const {Sequelize} = require("sequelize");
  *                  type: integer
  *              max_capacity:
  *                  type: integer
+ *          required:
+ *              - id_room
+ *              - id_sport_hall
  */
 /**
  * @swagger
  * components:
  *  responses:
  *      RoomFound:
- *           description: send a room
+ *           description: send back a room
  *           content:
  *               application/json:
  *                   schema:
@@ -68,6 +71,8 @@ module.exports.getRoom = async (req, res) => {
  *  responses:
  *      AddRoom:
  *          description: The room has been added
+ *      SportHallNotFound:
+ *          description: The sport hall is not found
  *  requestBodies:
  *      RoomToAdd:
  *          content:
@@ -81,6 +86,9 @@ module.exports.getRoom = async (req, res) => {
  *                              type: integer
  *                          max_capacity:
  *                              type: integer
+ *                      required:
+ *                          - id_room
+ *                          - id_sport_hall
  */
 module.exports.postRoom = async (req, res) => {
     const body = req.body;
@@ -91,7 +99,7 @@ module.exports.postRoom = async (req, res) => {
         }, async (t) => {
             const sportHallDB = await SportHallORM.findOne({where: {id: id_sport_hall}});
             if(sportHallDB === null){
-                throw new Error("Sport hall id not valid");
+                throw new Error("Sport hall not found");
             }
 
             await RoomORM.create({
@@ -103,8 +111,8 @@ module.exports.postRoom = async (req, res) => {
         res.sendStatus(201);
     } catch (error){
         console.log(error);
-        if (error.message === "Sport hall id not valid") {
-            res.status(404).send("The sport hall id is not valid");
+        if (error.message === "Sport hall not found") {
+            res.status(404).send("The sport hall is not found");
         } else {
             res.sendStatus(500);
         }
@@ -130,6 +138,9 @@ module.exports.postRoom = async (req, res) => {
  *                              type: integer
  *                          max_capacity:
  *                              type: integer
+ *                      required:
+ *                          - id_room
+ *                          - id_sport_hall
  */
 module.exports.updateRoom = async (req, res) => {
     const {id_room, id_sport_hall, max_capacity} = req.body;
@@ -139,7 +150,7 @@ module.exports.updateRoom = async (req, res) => {
         }, async (t) => {
             const sportHallDB = await SportHallORM.findOne({where: {id: id_sport_hall}});
             if(sportHallDB === null){
-                throw new Error("Sport hall id not valid");
+                throw new Error("Sport hall not found");
             }
 
             await RoomORM.update({id_room, id_sport_hall, max_capacity}, {where: {id_room: id_room, id_sport_hall: id_sport_hall}}, {transaction: t});
@@ -147,8 +158,8 @@ module.exports.updateRoom = async (req, res) => {
         res.sendStatus(204);
     } catch (error){
         console.log(error);
-        if (error.message === "Sport hall id not valid") {
-            res.status(404).send("The sport hall id is not valid");
+        if (error.message === "Sport hall not found") {
+            res.status(404).send("The sport hall is not found");
         } else {
             res.sendStatus(500);
         }

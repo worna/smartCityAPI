@@ -59,36 +59,41 @@ const {Sequelize} = require("sequelize");
  * components:
  *  responses:
  *      CustomersFound:
- *           description: send customers
+ *           description: send an array of all customers
  *           content:
  *               application/json:
  *                   schema:
  *                       $ref: '#/components/schemas/ArrayOfCustomers'
  */
 module.exports.getAllCustomers = async (req, res) => {
-    const allCustomers = await CustomerORM.findAll();
-    const customers = [];
-    for (const customerDB of allCustomers) {
-        const customer = {
-            id: customerDB.id,
-            first_name : customerDB.first_name,
-            last_name : customerDB.last_name,
-            birth_date : customerDB.birth_date,
-            gender : customerDB.gender,
-            phone_number : customerDB.phone_number,
-            email : customerDB.email,
-            inscription_date : customerDB.inscription_date,
-            is_manager : customerDB.is_manager,
-            is_instructor : customerDB.is_instructor,
-            language : customerDB.language,
-            address : customerDB.address,
-            city_name : customerDB.city_name,
-            zip_code : customerDB.zip_code,
-            country : customerDB.country
+    try{
+        const allCustomers = await CustomerORM.findAll();
+        const customers = [];
+        for (const customerDB of allCustomers) {
+            const customer = {
+                id: customerDB.id,
+                first_name : customerDB.first_name,
+                last_name : customerDB.last_name,
+                birth_date : customerDB.birth_date,
+                gender : customerDB.gender,
+                phone_number : customerDB.phone_number,
+                email : customerDB.email,
+                inscription_date : customerDB.inscription_date,
+                is_manager : customerDB.is_manager,
+                is_instructor : customerDB.is_instructor,
+                language : customerDB.language,
+                address : customerDB.address,
+                city_name : customerDB.city_name,
+                zip_code : customerDB.zip_code,
+                country : customerDB.country
+            }
+            customers.push({customer});
         }
-        customers.push({customer});
+        res.json(customers);
+    } catch (error){
+        console.log(error);
+        res.sendStatus(500);
     }
-    res.json(customers);
 };
 
 /**
@@ -97,6 +102,8 @@ module.exports.getAllCustomers = async (req, res) => {
  *      responses:
  *          CustomerAdd:
  *              description: The customer has been  added to database
+ *          IncorrectCustomerBody:
+ *              description: At least one parameter in body is wrong or empty
  *      requestBodies:
  *          CustomerToAdd:
  *              content:
@@ -199,8 +206,8 @@ module.exports.postCustomer = async (req, res) => {
  *                  application/json:
  *                      schema:
  *                          properties:
- *                              id:
- *                                  type: integer
+ *                              email:
+ *                                  type: string
  *                              firstname:
  *                                  type: string
  *                              lastname:
@@ -212,7 +219,7 @@ module.exports.postCustomer = async (req, res) => {
  *                                  type: integer
  *                              phonenumber:
  *                                  type: string
- *                              email:
+ *                              newemail:
  *                                  type: string
  *                              password:
  *                                  type: string
@@ -226,91 +233,100 @@ module.exports.postCustomer = async (req, res) => {
  *                                  type: integer
  *                              language:
  *                                  type: string
+ *                          required:
+ *                              - email
  */
 module.exports.updateCustomer = async (req, res) => {
-    if(req.session){
-        const toUpdate = req.body;
-        const newData = {};
-        let doUpdate = false;
+    const toUpdate = req.body;
+    const newData = {};
+    let doUpdate = false;
+    const customerDB = await CustomerORM.findOne({where: {email: req.body.email}});
+    if (customerDB === null){
+        throw new Error("Customer not found");
+    }
+    if(
+        toUpdate.lastname !== undefined ||
+        toUpdate.firstname !== undefined ||
+        toUpdate.gender !== undefined ||
+        toUpdate.birthdate !== undefined ||
+        toUpdate.phonenumber !== undefined ||
+        toUpdate.newemail !== undefined ||
+        toUpdate.password !== undefined ||
+        toUpdate.inscriptiondate !== undefined ||
+        toUpdate.ismanager !== undefined ||
+        toUpdate.isinstructor !== undefined ||
+        toUpdate.language !== undefined ||
+        toUpdate.address !== undefined ||
+        toUpdate.city_name !== undefined ||
+        toUpdate.zip_code !== undefined ||
+        toUpdate.country !== undefined
+    ){
+        doUpdate = true;
+    }
 
-        if(
-            toUpdate.lastname !== undefined ||
-            toUpdate.firstname !== undefined ||
-            toUpdate.gender !== undefined ||
-            toUpdate.birthdate !== undefined ||
-            toUpdate.phonenumber !== undefined ||
-            toUpdate.newemail !== undefined ||
-            toUpdate.password !== undefined ||
-            toUpdate.inscriptiondate !== undefined ||
-            toUpdate.ismanager !== undefined ||
-            toUpdate.isinstructor !== undefined ||
-            toUpdate.language !== undefined ||
-            toUpdate.address !== undefined ||
-            toUpdate.city_name !== undefined ||
-            toUpdate.zip_code !== undefined ||
-            toUpdate.country !== undefined
-        ){
-            doUpdate = true;
+    if(doUpdate){
+        newData.lastname = toUpdate.lastname;
+        newData.firstname = toUpdate.firstname;
+        newData.gender = toUpdate.gender;
+        newData.birthdate = toUpdate.birthdate;
+        newData.phonenumber = toUpdate.phonenumber;
+        newData.newemail = toUpdate.newemail;
+        newData.password = toUpdate.password;
+        newData.inscriptiondate = toUpdate.inscriptiondate;
+        newData.ismanager = toUpdate.ismanager;
+        newData.isinstructor = toUpdate.isinstructor;
+        newData.language = toUpdate.language;
+        newData.address = toUpdate.address;
+        newData.city_name = toUpdate.city_name;
+        newData.zip_code = toUpdate.zip_code;
+        newData.country = toUpdate.country;
+
+        const client = await pool.connect();
+        try{
+            await CustomerDB.updateCustomer(
+                client,
+                req.body.email,
+                newData.firstname,
+                newData.lastname,
+                newData.birthdate,
+                newData.gender,
+                newData.phonenumber,
+                newData.newemail,
+                newData.password,
+                newData.inscriptiondate,
+                newData.ismanager,
+                newData.isinstructor,
+                newData.language,
+                newData.address,
+                newData.city_name,
+                newData.zip_code,
+                newData.country
+            );
+            res.sendStatus(204);
         }
-
-        if(doUpdate){
-            newData.lastname = toUpdate.lastname;
-            newData.firstname = toUpdate.firstname;
-            newData.gender = toUpdate.gender;
-            newData.birthdate = toUpdate.birthdate;
-            newData.phonenumber = toUpdate.phonenumber;
-            newData.newemail = toUpdate.newemail;
-            newData.password = toUpdate.password;
-            newData.inscriptiondate = toUpdate.inscriptiondate;
-            newData.ismanager = toUpdate.ismanager;
-            newData.isinstructor = toUpdate.isinstructor;
-            newData.language = toUpdate.language;
-            newData.address = toUpdate.address;
-            newData.city_name = toUpdate.city_name;
-            newData.zip_code = toUpdate.zip_code;
-            newData.country = toUpdate.country;
-
-            const client = await pool.connect();
-            try{
-                await CustomerDB.updateCustomer(
-                    client,
-                    req.body.email,
-                    newData.firstname,
-                    newData.lastname,
-                    newData.birthdate,
-                    newData.gender,
-                    newData.phonenumber,
-                    newData.newemail,
-                    newData.password,
-                    newData.inscriptiondate,
-                    newData.ismanager,
-                    newData.isinstructor,
-                    newData.language,
-                    newData.address,
-                    newData.city_name,
-                    newData.zip_code,
-                    newData.country
-                );
-                res.sendStatus(204);
-            }
-            catch (error) {
-                console.log(error);
+        catch (error) {
+            console.log(error);
+            if(error.message === "Customer not found"){
+                res.status(404).send("The customer is not found");
+            } else {
                 res.sendStatus(500);
-            } finally {
-                client.release();
             }
-        } else {
-            console.log("Parameters are wrong or empty");
-            res.sendStatus(400);
+        } finally {
+            client.release();
         }
-
     } else {
-        console.log("You are not connected!");
-        res.sendStatus(401);
+        console.log("Parameters are wrong or empty");
+        res.sendStatus(400);
     }
 };
 
-// faire swagger
+/**
+ *@swagger
+ *components:
+ *  responses:
+ *      CustomerDeleted:
+ *          description: The customer has been deleted
+ */
 module.exports.deleteCustomer = async (req, res) => {
     const {email} = req.body;
     try{

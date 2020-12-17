@@ -48,11 +48,11 @@ router.post('/',JWTMiddleWare.identification, AuthoMiddleware.mustBeAdmin, Manag
  *          401:
  *              $ref: '#/components/responses/MissingJWT'
  *          403:
- *              $ref: '#/components/responses/isMyAccountOrAdmin'
+ *              $ref: '#/components/responses/isMyAccount'
  *          500:
  *              description: Server error
  *
  */
-router.patch('/', JWTMiddleWare.identification, AuthoMiddleware.isMyAccountOrAdmin, CustomerControleur.updateCustomer);
+router.patch('/', JWTMiddleWare.identification, AuthoMiddleware.isMyAccount, CustomerControleur.updateCustomer);
 
 module.exports = router;

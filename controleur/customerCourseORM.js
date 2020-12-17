@@ -7,7 +7,23 @@ const sequelize = require("../ORM/sequelize");
 const {Sequelize} = require("sequelize");
 
 
-// faire swagger
+/**
+ * @swagger
+ * components:
+ *   responses:
+ *      CustomersOfCourseFound:
+ *          description: send back array of customer for a course
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                       $ref: '#/components/schemas/ArrayOfCustomers'
+ *      InvalidCourseId:
+ *          description: The course id should be a number
+ *      CourseNotFound:
+ *          description: The course doesn't exist
+ *      NoCustomerFound:
+ *          description: The course doesn't have customer
+ */
 module.exports.getCustomersInCourse = async (req, res) => {
     const idTexte = req.params.id;
     const id = parseInt(idTexte);
@@ -18,7 +34,7 @@ module.exports.getCustomersInCourse = async (req, res) => {
         } else {
             const courseDB = await CourseORM.findOne({where: {id: id}});
             if(courseDB === null){
-                throw new Error("Course id not valid");
+                throw new Error("Course not found");
             }
             const customersInCourse = await CustomerCourseORM.findAll({where: {id_course: id}});
             if(customersInCourse !== null){
@@ -41,17 +57,34 @@ module.exports.getCustomersInCourse = async (req, res) => {
         }
     } catch (error){
         console.log(error);
-        res.sendStatus(500);
+        if(error.message === "Course not found"){
+            res.status(404).send("The Course with this id not found");
+        } else {
+            res.sendStatus(500);
+        }
     }
 }
-
-// faire swagger
+ /**
+ * @swagger
+ * components:
+ *   responses:
+ *      CoursesOfCustomerFound:
+ *          description: send back array of courses for a customer
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                       $ref: '#/components/schemas/ArrayOfCourses'
+ *      CustomerNotFound:
+ *          description: The customer doesn't exist
+ *      NoCourseFoundForCustomer:
+ *          description: No course found for this customer
+*/
 module.exports.getCoursesOfCustomer = async (req, res) => {
     const email = req.params.email;
     try{
         const customerDB = await CustomerORM.findOne({where: {email: email}});
         if(customerDB === null){
-            throw new Error("Customer email not valid");
+            throw new Error("Customer not found");
         }
         const coursesOfCustomer = await CustomerCourseORM.findAll({where: {email_customer: email}});
         if(coursesOfCustomer !== null){
@@ -86,12 +119,19 @@ module.exports.getCoursesOfCustomer = async (req, res) => {
             }
             res.json(courses);
         } else {
-            console.log("No course for this customer");
-            res.sendStatus(404);
+            throw new Error("No course found");
         }
     } catch (error){
         console.log(error);
-        res.sendStatus(500);
+        if(error.message === "Customer not found"){
+            res.status(404).send("The customer with this email is not found");
+        } else if (error.message === "No course found"){
+            res.status(404).send("No course found for this cutomer");
+        }
+        else {
+            res.sendStatus(500);
+        }
+
     }
 }
 
@@ -112,6 +152,10 @@ module.exports.getCoursesOfCustomer = async (req, res) => {
  *                              type: string
  *                          id_course:
  *                              type: integer
+ *                      required:
+ *                          - email_customer
+ *                          - id_course
+ *
  */
 module.exports.postCustomerCourse = async (req, res) => {
     const {email, course} = req.body;

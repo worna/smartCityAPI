@@ -145,14 +145,16 @@ module.exports.postSportHall = async (req, res) => {
         await sequelize.transaction( {
             deferrable:  Sequelize.Deferrable.SET_DEFERRED
         }, async (t) => {
-        const managerDB = await CustomerORM.findOne({where: {email: manager}});
-        if (managerDB === null){
-                throw new Error("Manager email not valid");
-            } else {
-                const {is_manager} = managerDB;
-                if(is_manager != 1) {
-                    CustomerORM.update({is_manager : 1},{where:{email: manager}});
-                }
+        if(manager !== undefined){
+            const managerDB = await CustomerORM.findOne({where: {email: manager}});
+            if (managerDB === null){
+                    throw new Error("Manager email not valid");
+                } else {
+                    const {is_manager} = managerDB;
+                    if(is_manager != 1) {
+                        await CustomerORM.update({is_manager : 1},{where:{email: manager}});
+                    }
+            }
         }
         const cityDB = await CityORM.findOne({where: {city_name: city_name, zip_code: zip_code, country: country}});
         if(cityDB === null){
@@ -219,9 +221,16 @@ module.exports.updateSportHall = async (req, res) => {
         await sequelize.transaction( {
             deferrable:  Sequelize.Deferrable.SET_DEFERRED
         }, async (t) => {
-        const managerDB = await CustomerORM.findOne({where: {email: manager}});
-        if(managerDB === null){
-            throw new Error("Manager id not valid");
+        if(manager !== undefined){
+            const managerDB = await CustomerORM.findOne({where: {email: manager}});
+            if (managerDB === null){
+                throw new Error("Manager email not valid");
+            } else {
+                const {is_manager} = managerDB;
+                if(is_manager != 1) {
+                    await CustomerORM.update({is_manager : 1},{where:{email: manager}});
+                }
+            }
         }
         const cityDB = await CityORM.findOne({where: {city_name: city_name, zip_code: zip_code, country: country}});
         if(cityDB === null){
