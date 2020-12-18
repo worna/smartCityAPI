@@ -45,7 +45,7 @@ const {Op, Sequelize} = require("sequelize");
  *                       $ref: '#/components/schemas/Course'
  */
 module.exports.getCourse = async (req, res) => {
-    const email = req.params.id;
+    const idTexte = req.params.id;
     const id = parseInt(idTexte);
     try{
         if(isNaN(id)){
@@ -68,7 +68,10 @@ module.exports.getCourse = async (req, res) => {
                 }
                 const course = {
                     id: id,
-                    sportHall: name,
+                    sportHall: {
+                        id_sport_hall,
+                        name,
+                    },
                     room: {
                         id_room,
                         max_capacity,
@@ -133,7 +136,10 @@ module.exports.getCourses = async (req, res) => {
 
                 const course = {
                     id: id,
-                    sportHall: name,
+                    sportHall: {
+                        id_sport_hall,
+                        name,
+                    },
                     room: {
                         id_room,
                         max_capacity,
@@ -207,7 +213,7 @@ module.exports.postCourse = async (req, res) => {
         }, async (t) => {
         if(instructor !== undefined){
             const instructorDB = await CustomerORM.findOne({where: {email: instructor}});
-            if (instructorDB !== null) {
+            if (instructorDB === null) {
                 throw new Error("Instructor email not valid");
             } else {
                 const {is_instructor} = instructorDB;
@@ -345,7 +351,7 @@ module.exports.updateCourse = async (req, res) => {
         }
         if(instructor !== undefined){
             const instructorDB = await CustomerORM.findOne({where: {email: instructor}});
-            if (instructorDB !== null) {
+            if (instructorDB === null) {
                 throw new Error("Instructor email not valid");
             } else {
                 const {is_instructor} = instructorDB;
