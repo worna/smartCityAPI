@@ -158,8 +158,6 @@ module.exports.updateManager = async (req, res) => {
  *                              password:
  *                                  type: string
  *                                  format: password
- *                              isinstructor:
- *                                  type: integer
  *                              language:
  *                                  type: string
  *                              address:
@@ -178,7 +176,6 @@ module.exports.updateManager = async (req, res) => {
  *                              - phonenumber
  *                              - email
  *                              - password
- *                              - isinstructor
  *                              - language
  *                              - address
  *                              - city_name
@@ -193,14 +190,13 @@ module.exports.postManager = async (req, res) => {
     const phonenumber= req.body.phonenumber;
     const email = req.body.email;
     const password = req.body.password;
-    const isinstructor = req.body.isinstructor;
     const language = req.body.language;
     const address = req.body.address;
     const city_name = req.body.city_name;
     const zip_code = req.body.zip_code;
     const country = req.body.country;
 
-    if(lastname === undefined || firstname === undefined || birthdate === undefined || gender === undefined || phonenumber === undefined || email === undefined || password === undefined  || isinstructor === undefined || language === undefined || address === undefined || city_name === undefined || zip_code === undefined || country === undefined){
+    if(lastname === undefined || firstname === undefined || birthdate === undefined || gender === undefined || phonenumber === undefined || email === undefined || password === undefined || language === undefined || address === undefined || city_name === undefined || zip_code === undefined || country === undefined){
         console.log("Parameters are wrong or empty");
         res.sendStatus(400);
     } else {
@@ -218,7 +214,7 @@ module.exports.postManager = async (req, res) => {
                     }, {transaction: t});
                 }
             });
-            await ManagerDB.postManager(client, lastname, firstname, birthdate, gender, phonenumber, email, password, isinstructor, language, address, city_name, zip_code, country);
+            await ManagerDB.postManager(client, lastname, firstname, birthdate, gender, phonenumber, email, password, language, address, city_name, zip_code, country);
             res.sendStatus(201);
         } catch (error) {
             console.log(error);

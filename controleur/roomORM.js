@@ -50,7 +50,10 @@ module.exports.getRoom = async (req, res) => {
                 const {name} = sportHall;
                 const room = {
                     id: id_room,
-                    sportHall: name,
+                    sportHall: {
+                        id_sport_hall,
+                        name
+                    },
                     max_capacity
                 }
                 res.json(room);
