@@ -32,7 +32,7 @@ const router = new Router;
  *              description: Server error
  *
  */
-router.get('/:id', JWTMiddleWare.identification, AuthoMiddleware.isMyAccountOrAdmin, CustomerControleur.getCustomer);
+router.get('/:email', JWTMiddleWare.identification, AuthoMiddleware.isMyAccountOrAdmin, CustomerControleur.getCustomer);
 
 /**
  * @swagger

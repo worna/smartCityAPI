@@ -1,12 +1,13 @@
+const {getHash} = require("../utils/utils");
 module.exports.getManager = async (client, email) => {
     return await client.query(`
         SELECT * FROM customer WHERE email = $1 AND is_manager = 1 LIMIT 1;
     `, [email]);
 }
-module.exports.postManager = async (client, firstName, lastName, birthDate, gender, phoneNumber, email, password, isInstructor, language, address, city_name, zip_code, country) => {
+module.exports.postManager = async (client, lastName, firstName, birthDate, gender, phoneNumber, email, password, language, address, city_name, zip_code, country) => {
     return await client.query(`
         INSERT INTO customer(first_name, last_name, birth_date, gender, phone_number, email, password, inscription_date, is_manager, is_instructor, language, address, city_name, zip_code, country)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, current_timestamp, 1, $8, $9, $10, $11, $12, $13)`, [firstName, lastName, birthDate, gender, phoneNumber, email, await getHash(password), isInstructor, language, address, city_name, zip_code, country]
+        VALUES ($1, $2, $3, $4, $5, $6, $7, current_timestamp, 1, 0, $8, $9, $10, $11, $12)`, [firstName, lastName, birthDate, gender, phoneNumber, email, await getHash(password), language, address, city_name, zip_code, country]
     );
 }
 module.exports.getSportHallIds = async (client, email) => {

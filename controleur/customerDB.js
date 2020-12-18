@@ -57,11 +57,9 @@ const {Sequelize} = require("sequelize");
  *                       $ref: '#/components/schemas/Customer'
  */
 module.exports.getCustomer = async (req, res) => {
-    const idTexte = req.params.id;
-    const id = parseInt(idTexte);
-    //const email = req.params.email;
+    const email = req.params.email;
     try{
-        const customerDB = await CustomerORM.findOne({where: {id: id}});
+        const customerDB = await CustomerORM.findOne({where: {email: email}});
         if(customerDB !== null){
             const {id, first_name, last_name, birth_date, gender, phone_number, email, inscription_date, is_manager, is_instructor, language, address, city_name, zip_code, country} = customerDB;
             const customer = {

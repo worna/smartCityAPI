@@ -1,6 +1,9 @@
 const pool = require('../modele/database');
 const ManagerDB = require('../modele/managerDB');
 const CustomerORM = require('../ORM/model/Customer');
+const CityORM = require('../ORM/model/City');
+const sequelize = require("../ORM/sequelize");
+const {Sequelize} = require("sequelize");
 
 
 
@@ -183,6 +186,7 @@ module.exports.updateManager = async (req, res) => {
  *                              - country
  */
 module.exports.postManager = async (req, res) => {
+    console.log(req.body);
     const lastname = req.body.lastname;
     const firstname = req.body.firstname;
     const birthdate = req.body.birthdate;
