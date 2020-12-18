@@ -310,13 +310,11 @@ module.exports.updateSportHall = async (req, res) => {
         }
         const cityDB = await CityORM.findOne({where: {city_name: city_name, zip_code: zip_code, country: country}});
         if(cityDB === null){
-            city = await CityORM.create({
+            await CityORM.create({
                 city_name,
                 zip_code,
                 country
-            }, {transaction: t});
-        } else {
-            city = cityDB;
+            });
         }
         await SportHallORM.update({ name, manager, phone_number, email, address, city_name, zip_code, country}, {where: {id}}, {transaction: t});
         });
